@@ -3,354 +3,241 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>GOM CRAFT | Official Platform</title>
+    <title>GOM CRAFT | المنصة الرسمية</title>
     
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.9.1/gsap.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/vanilla-tilt/1.7.0/vanilla-tilt.min.js"></script>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/vanilla-tilt/1.8.0/vanilla-tilt.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
     <style>
+        /* إعدادات التصميم الاحترافي */
         :root {
-            --primary-color: #00ff88;
-            --secondary-color: #2ecc71;
-            --bg-dark: #050505;
-            --card-bg: rgba(255, 255, 255, 0.05);
-            --accent: #ff0055;
+            --primary: #00ff88;
+            --secondary: #2ecc71;
+            --bg: #050505;
+            --card-bg: rgba(255, 255, 255, 0.03);
+            --border: rgba(255, 255, 255, 0.1);
+            --font: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
         }
 
-        * { margin: 0; padding: 0; box-sizing: border-box; }
+        * { margin: 0; padding: 0; box-sizing: border-box; outline: none; }
+        html { scroll-behavior: smooth; }
 
         body {
-            background-color: var(--bg-dark);
-            color: white;
-            font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            background-color: var(--bg);
+            color: #fff;
+            font-family: var(--font);
+            line-height: 1.6;
             overflow-x: hidden;
         }
 
-        /* Background WebGL Canvas */
-        #bg-canvas {
-            position: fixed;
-            top: 0; left: 0;
-            z-index: -1;
-            filter: blur(8px);
+        /* شريط التمرير */
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-track { background: #000; }
+        ::-webkit-scrollbar-thumb { background: var(--primary); border-radius: 10px; }
+
+        /* الأنيميشن الخلفي */
+        .bg-glow {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: radial-gradient(circle at 50% 50%, rgba(0, 255, 136, 0.05) 0%, transparent 80%);
+            z-index: -1; pointer-events: none;
         }
 
-        /* Custom Scrollbar */
-        ::-webkit-scrollbar { width: 8px; }
-        ::-webkit-scrollbar-track { background: #111; }
-        ::-webkit-scrollbar-thumb { background: var(--primary-color); border-radius: 10px; }
-
-        /* Navigation */
+        /* الهيدر */
         nav {
-            position: fixed;
-            width: 100%;
-            padding: 20px 50px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            background: rgba(0,0,0,0.8);
-            backdrop-filter: blur(10px);
-            z-index: 1000;
-            border-bottom: 1px solid rgba(255,255,255,0.1);
+            position: fixed; width: 100%; padding: 20px 5%;
+            display: flex; justify-content: space-between; align-items: center;
+            background: rgba(0,0,0,0.8); backdrop-filter: blur(15px);
+            z-index: 1000; border-bottom: 1px solid var(--border);
         }
+        .logo { font-size: 1.5rem; font-weight: 900; color: var(--primary); letter-spacing: 2px; }
+        .status-dot { width: 10px; height: 10px; background: var(--primary); border-radius: 50%; display: inline-block; margin-right: 10px; box-shadow: 0 0 10px var(--primary); animation: blink 1.5s infinite; }
 
-        .logo { font-size: 24px; font-weight: 900; letter-spacing: 2px; color: var(--primary-color); }
-
-        /* Hero Section */
+        /* القسم الرئيسي Hero */
         .hero {
-            height: 100vh;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            text-align: center;
-            padding: 0 20px;
-            background: radial-gradient(circle at center, rgba(0,255,136,0.1) 0%, transparent 70%);
+            height: 100vh; display: flex; flex-direction: column; justify-content: center;
+            align-items: center; text-align: center; padding: 0 20px;
+            background: url('https://www.transparenttextures.com/patterns/carbon-fibre.png');
         }
+        .hero h1 { font-size: 5rem; text-transform: uppercase; margin-bottom: 15px; filter: drop-shadow(0 0 20px rgba(0,255,136,0.4)); }
+        .hero p { font-size: 1.2rem; color: #aaa; max-width: 600px; }
 
-        .hero h1 {
-            font-size: clamp(3rem, 8vw, 6rem);
-            text-transform: uppercase;
-            margin-bottom: 20px;
-            background: linear-gradient(to right, #fff, var(--primary-color));
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            filter: drop-shadow(0 0 30px rgba(0,255,136,0.3));
-        }
+        /* الأقسام */
+        section { padding: 100px 8%; }
+        .section-header { margin-bottom: 50px; position: relative; }
+        .section-header h2 { font-size: 2.5rem; color: var(--primary); margin-bottom: 10px; }
+        .section-header::after { content: ''; position: absolute; bottom: -10px; right: 0; width: 50px; height: 4px; background: var(--primary); }
 
-        /* Sections Styling */
-        section { padding: 100px 5%; opacity: 0; transform: translateY(50px); transition: 1s; }
-        section.visible { opacity: 1; transform: translateY(0); }
+        /* شبكة العرض */
+        .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 30px; }
 
-        .section-header {
-            margin-bottom: 60px;
-            border-right: 5px solid var(--primary-color);
-            padding-right: 20px;
-        }
-
-        /* GRID SYSTEM */
-        .grid-layout {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
-            gap: 30px;
-        }
-
-        /* Glassmorphism Player Card */
+        /* كارت اللاعبين */
         .player-card {
-            background: var(--card-bg);
-            border: 1px solid rgba(255,255,255,0.1);
-            border-radius: 20px;
-            padding: 30px;
-            position: relative;
-            overflow: hidden;
-            transition: 0.5s;
-            cursor: pointer;
-            backdrop-filter: blur(15px);
+            background: var(--card-bg); border: 1px solid var(--border); border-radius: 25px;
+            padding: 40px 20px; text-align: center; transition: 0.5s; cursor: pointer;
+            backdrop-filter: blur(10px); position: relative; overflow: hidden;
         }
+        .player-card:hover { border-color: var(--primary); transform: translateY(-10px); background: rgba(0,255,136,0.02); }
+        .player-card img { width: 120px; height: 120px; border-radius: 20px; border: 2px solid var(--primary); margin-bottom: 20px; object-fit: cover; }
+        .player-card h3 { font-size: 1.5rem; margin-bottom: 5px; }
+        .player-card .rank { color: var(--primary); font-weight: bold; font-size: 0.9rem; text-transform: uppercase; }
 
-        .player-card::before {
-            content: '';
-            position: absolute;
-            top: 0; left: -100%;
-            width: 100%; height: 100%;
-            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.1), transparent);
-            transition: 0.5s;
-        }
-
-        .player-card:hover::before { left: 100%; }
-
-        .player-card:hover {
-            border-color: var(--primary-color);
-            transform: scale(1.02);
-            box-shadow: 0 20px 40px rgba(0,0,0,0.4);
-        }
-
-        .player-img {
-            width: 100px; height: 100px;
-            border-radius: 15px;
-            margin-bottom: 20px;
-            border: 2px solid var(--primary-color);
-            object-fit: cover;
-        }
-
-        /* Building Card - Cinema Style */
+        /* كارت البنايات */
         .build-card {
-            height: 450px;
-            border-radius: 25px;
-            position: relative;
-            overflow: hidden;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+            height: 400px; border-radius: 20px; overflow: hidden; position: relative;
+            box-shadow: 0 15px 35px rgba(0,0,0,0.5);
         }
-
         .build-card img { width: 100%; height: 100%; object-fit: cover; transition: 1s; }
         .build-card:hover img { transform: scale(1.1); }
-
         .build-overlay {
-            position: absolute;
-            bottom: 0; width: 100%;
-            padding: 40px 20px;
+            position: absolute; bottom: 0; width: 100%; padding: 30px;
             background: linear-gradient(transparent, rgba(0,0,0,0.9));
         }
 
-        /* Information Modal */
-        #main-modal {
-            position: fixed;
-            top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(0,0,0,0.95);
-            display: none; justify-content: center;
-            align-items: center; z-index: 2000;
+        /* نافذة المعلومات Modal */
+        .modal {
+            position: fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.95);
+            display:none; justify-content:center; align-items:center; z-index:2000;
         }
-
         .modal-content {
-            background: #111;
-            padding: 50px;
-            border-radius: 30px;
-            max-width: 600px;
-            width: 90%;
-            text-align: center;
-            border: 1px solid var(--primary-color);
+            background:#111; padding:40px; border-radius:30px; border:1px solid var(--primary);
+            text-align:center; max-width:500px; width:90%; position:relative;
         }
 
-        /* UI Elements */
-        .badge {
-            display: inline-block;
-            padding: 5px 15px;
-            border-radius: 50px;
-            font-size: 12px;
-            background: var(--primary-color);
-            color: black;
-            font-weight: bold;
-            margin-bottom: 10px;
+        @keyframes blink { 0%, 100% { opacity: 1; } 50% { opacity: 0.3; } }
+        
+        @media (max-width: 768px) {
+            .hero h1 { font-size: 3rem; }
+            nav { padding: 15px 20px; }
         }
-
-        /* Live Status Pulse */
-        .status-online {
-            width: 12px; height: 12px;
-            background: #00ff88;
-            border-radius: 50%;
-            display: inline-block;
-            margin-left: 10px;
-            box-shadow: 0 0 10px #00ff88;
-            animation: pulse 2s infinite;
-        }
-
-        @keyframes pulse { 0% { transform: scale(1); opacity: 1; } 50% { transform: scale(1.5); opacity: 0.5; } 100% { transform: scale(1); opacity: 1; } }
-
     </style>
 </head>
 <body>
 
-<canvas id="bg-canvas"></canvas>
+<div class="bg-glow"></div>
 
 <nav>
-    <div class="logo">GOM CRAFT <span class="status-online"></span></div>
-    <div class="nav-links">
-        <a href="#players" style="color:white; text-decoration:none; margin-right:20px;">الأعضاء</a>
-        <a href="#builds" style="color:white; text-decoration:none;">البنايات</a>
-    </div>
+    <div class="logo"><span class="status-dot"></span> GOM CRAFT</div>
+    <div style="font-size: 0.8rem; color: #777;">VERSION 2.0</div>
 </nav>
 
-<section class="hero visible">
-    <div id="main-badge" class="badge">S1 Season</div>
-    <h1 id="main-title">GOM CRAFT</h1>
-    <p id="main-description" style="font-size: 1.2rem; max-width: 700px; color: #ccc;">جاري مزامنة بيانات السيرفر...</p>
+<section class="hero" id="home">
+    <h1 id="hero-title">GOM CRAFT</h1>
+    <p id="hero-desc">جاري مزامنة بيانات السيرفر من الجدول...</p>
+    <div id="hero-extra" style="margin-top:20px; color:var(--primary); font-weight:bold;"></div>
 </section>
 
-<section id="players-section">
+<section id="players">
     <div class="section-header">
-        <h2>أعضاء النخبة</h2>
-        <p>الأساطير الذين صنعوا المجد في گوم كرافت</p>
+        <h2>نخبة اللاعبين</h2>
+        <p>الأعضاء المسجلين في النظام</p>
     </div>
-    <div class="grid-layout" id="players-container"></div>
+    <div class="grid" id="players-grid"></div>
 </section>
 
-<section id="builds-section">
+<section id="builds">
     <div class="section-header">
-        <h2>عجائب البناء</h2>
-        <p>استعرض إبداعاتنا المعمارية في السيرفر</p>
+        <h2>معرض البناء</h2>
+        <p>أبرز مشاريع وإبداعات السيرفر</p>
     </div>
-    <div class="grid-layout" id="builds-container"></div>
+    <div class="grid" id="builds-grid"></div>
 </section>
 
-<div id="main-modal" onclick="closeModal()">
+<div class="modal" id="infoModal" onclick="this.style.display='none'">
     <div class="modal-content" onclick="event.stopPropagation()">
-        <img id="modal-img" src="" class="player-img" style="width:150px; height:150px;">
-        <h2 id="modal-title"></h2>
-        <div id="modal-badge" class="badge"></div>
-        <p id="modal-desc" style="margin-top:20px; line-height: 1.6; color: #aaa;"></p>
-        <button onclick="closeModal()" style="margin-top:30px; padding:10px 30px; background:var(--primary-color); border:none; border-radius:10px; cursor:pointer; font-weight:bold;">إغلاق النافذة</button>
+        <img id="m-img" src="" style="width:100px; height:100px; border-radius:15px; margin-bottom:20px;">
+        <h2 id="m-title"></h2>
+        <div id="m-rank" style="color:var(--primary); margin:10px 0; font-weight:bold;"></div>
+        <p id="m-desc" style="color:#ccc;"></p>
+        <button onclick="document.getElementById('infoModal').style.display='none'" style="margin-top:25px; background:var(--primary); border:none; padding:10px 30px; border-radius:10px; cursor:pointer; font-weight:bold;">إغلاق</button>
     </div>
 </div>
 
 <script>
-    // --- 1. Background Animation (Three.js) ---
-    const scene = new THREE.Scene();
-    const camera = new THREE.Camera();
-    const renderer = new THREE.WebGLRenderer({ canvas: document.getElementById('bg-canvas'), alpha: true });
-    // (Three.js logic added in final compiled code)
-
-    // --- 2. Data Logic (Google Sheets) ---
+    // معرف الجدول الخاص بك
     const SHEET_ID = '10RiRpOwdCtq8w_WwLJhUkUFxFPMkI595yiBqw2ET0pg';
-    const GIZ_URL = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:json`;
+    const DATA_URL = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:json`;
 
-    async function syncGomData() {
+    async function loadData() {
         try {
-            const res = await fetch(GIZ_URL);
-            const text = await res.text();
-            const data = JSON.parse(text.substr(47).slice(0, -2));
-            const rows = data.table.rows;
+            const response = await fetch(DATA_URL);
+            const text = await response.text();
+            const json = JSON.parse(text.substr(47).slice(0, -2));
+            const rows = json.table.rows;
 
-            const playersContainer = document.getElementById('players-container');
-            const buildsContainer = document.getElementById('builds-container');
+            const pGrid = document.getElementById('players-grid');
+            const bGrid = document.getElementById('builds-grid');
 
-            rows.forEach((row, i) => {
-                if(i === 0) return; // Skip Header
+            rows.forEach((row, index) => {
+                if (index === 0) return; // تخطي العناوين
 
-                const type = row.c[0]?.v; // Type: Hero, Player, Build
-                const name = row.c[1]?.v || "";
-                const info = row.c[2]?.v || "";
-                const img = row.c[3]?.v || "";
-                const extra = row.c[4]?.v || "";
+                const type  = row.c[0] ? row.c[0].v : "";
+                const name  = row.c[1] ? row.c[1].v : "";
+                const info  = row.c[2] ? row.c[2].v : "";
+                const img   = row.c[3] ? row.c[3].v : "";
+                const extra = row.c[4] ? row.c[4].v : "";
 
                 if (type === "Hero") {
-                    document.getElementById('main-title').innerText = name;
-                    document.getElementById('main-description').innerText = info;
-                    document.getElementById('main-badge').innerText = extra;
+                    document.getElementById('hero-title').innerText = name;
+                    document.getElementById('hero-desc').innerText = info;
+                    document.getElementById('hero-extra').innerText = extra;
                 } 
                 else if (type === "Player") {
-                    renderPlayer(name, info, img, extra, playersContainer);
-                }
+                    createPlayer(name, info, img, extra, pGrid);
+                } 
                 else if (type === "Build") {
-                    renderBuild(name, info, img, buildsContainer);
+                    createBuild(name, info, img, bGrid);
                 }
             });
 
-            initTilt();
-            revealSections();
+            // تفعيل حركات الـ 3D
+            VanillaTilt.init(document.querySelectorAll(".player-card"), { max: 15, speed: 400, glare: true, "max-glare": 0.2 });
+            
+            // أنيميشن الظهور
+            gsap.from("section", { opacity: 0, y: 50, duration: 1, stagger: 0.3 });
 
-        } catch (e) { console.error("Data Sync Error", e); }
+        } catch (error) {
+            console.error("خطأ في جلب البيانات:", error);
+            document.getElementById('hero-desc').innerText = "تأكد من إعدادات مشاركة الجدول (Anyone with the link can view)";
+        }
     }
 
-    function renderPlayer(name, rank, bio, color, container) {
-        const div = document.createElement('div');
-        div.className = 'player-card';
-        div.setAttribute('data-tilt', '');
-        div.onclick = () => openModal(name, rank, bio, imgPath(img, name));
+    function createPlayer(name, rank, desc, img, container) {
+        const card = document.createElement('div');
+        card.className = 'player-card';
+        const finalImg = img && img.includes('http') ? img : `https://mc-heads.net/avatar/${name}`;
         
-        div.innerHTML = `
-            <div class="badge" style="background:${color || 'var(--primary-color)'}">${rank}</div>
-            <img src="${imgPath(img, name)}" class="player-img">
+        card.innerHTML = `
+            <img src="${finalImg}" alt="${name}">
             <h3>${name}</h3>
-            <p style="font-size:14px; color:#777; margin-top:10px;">اضغط لعرض التفاصيل الكاملة</p>
+            <div class="rank">${rank}</div>
+            <p style="font-size:0.8rem; color:#666; margin-top:10px;">اضغط للتفاصيل</p>
         `;
-        container.appendChild(div);
+        card.onclick = () => {
+            document.getElementById('m-title').innerText = name;
+            document.getElementById('m-rank').innerText = rank;
+            document.getElementById('m-desc').innerText = desc;
+            document.getElementById('m-img').src = finalImg;
+            document.getElementById('infoModal').style.display = 'flex';
+        };
+        container.appendChild(card);
     }
 
-    function renderBuild(name, desc, img, container) {
-        const div = document.createElement('div');
-        div.className = 'build-card';
-        div.innerHTML = `
-            <img src="${img}">
+    function createBuild(name, desc, img, container) {
+        const card = document.createElement('div');
+        card.className = 'build-card';
+        card.innerHTML = `
+            <img src="${img}" alt="${name}">
             <div class="build-overlay">
                 <h3>${name}</h3>
-                <p style="color:#ddd; font-size:14px;">${desc}</p>
+                <p style="font-size:0.9rem; color:#ccc;">${desc}</p>
             </div>
         `;
-        container.appendChild(div);
+        container.appendChild(card);
     }
 
-    function imgPath(img, name) {
-        if (img && img.includes('http')) return img;
-        return `https://mc-heads.net/avatar/${name}`;
-    }
-
-    // --- 3. UI Interactions ---
-    function openModal(t, r, d, i) {
-        document.getElementById('modal-title').innerText = t;
-        document.getElementById('modal-badge').innerText = r;
-        document.getElementById('modal-desc').innerText = d;
-        document.getElementById('modal-img').src = i;
-        document.getElementById('main-modal').style.display = 'flex';
-        gsap.from(".modal-content", { scale: 0.8, opacity: 0, duration: 0.5 });
-    }
-
-    function closeModal() {
-        document.getElementById('main-modal').style.display = 'none';
-    }
-
-    function revealSections() {
-        const observer = new IntersectionObserver((entries) => {
-            entries.forEach(e => { if(e.isIntersecting) e.target.classList.add('visible'); });
-        }, { threshold: 0.1 });
-        document.querySelectorAll('section').forEach(s => observer.observe(s));
-    }
-
-    function initTilt() {
-        VanillaTilt.init(document.querySelectorAll("[data-tilt]"), { max: 10, speed: 400, glare: true, "max-glare": 0.3 });
-    }
-
-    syncGomData();
+    // بدء التحميل
+    loadData();
 </script>
 
 </body>

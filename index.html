@@ -3,178 +3,208 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Gom Craft | أعضاء السيرفر</title>
+    <title>Gom Craft | المنصة الرسمية</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/vanilla-tilt/1.7.0/vanilla-tilt.min.js"></script>
     <style>
         :root {
-            --primary: #55efc4; /* لون أخضر ماينكرافتي */
-            --accent: #fab1a0;
-            --bg: #121212;
-            --card: #1e1e1e;
+            --primary: #2ecc71;
+            --bg: #0f0f0f;
+            --card-bg: #1a1a1a;
+            --text: #ffffff;
         }
+
         body {
-            font-family: 'Segoe UI', Tahoma, sans-serif;
+            font-family: 'Segoe UI', sans-serif;
             background-color: var(--bg);
-            color: #ffffff;
+            color: var(--text);
             margin: 0;
-            padding: 0;
+            scroll-behavior: smooth;
         }
-        header {
-            text-align: center;
-            padding: 60px 20px;
-            background: linear-gradient(45deg, #000, #1a1a1a);
-            border-bottom: 3px solid var(--primary);
-        }
-        .container {
-            max-width: 1100px;
-            margin: 40px auto;
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-            gap: 25px;
-            padding: 0 20px;
-        }
-        .member-card {
-            background: var(--card);
-            border-radius: 15px;
-            overflow: hidden;
-            transition: 0.3s;
-            border: 1px solid #333;
-            text-align: center;
-            padding-bottom: 20px;
-            cursor: pointer;
-        }
-        .member-card:hover {
-            transform: translateY(-10px);
-            box-shadow: 0 10px 20px rgba(85, 239, 196, 0.2);
-            border-color: var(--primary);
-        }
-        .img-container {
-            background: #2d3436;
-            padding: 20px;
-            margin-bottom: 15px;
-        }
-        .member-card img {
-            width: 120px;
-            height: 120px;
-            border-radius: 10px;
-            object-fit: cover;
-            border: 2px solid var(--primary);
-        }
-        /* النافذة المنبثقة */
-        .modal-overlay {
-            display: none;
-            position: fixed;
-            top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(0,0,0,0.9);
-            z-index: 1000;
-            backdrop-filter: blur(5px);
-        }
-        .modal {
-            position: fixed;
-            top: 50%; left: 50%;
-            transform: translate(-50%, -50%);
-            background: #222;
-            width: 90%;
-            max-width: 500px;
-            padding: 30px;
-            border-radius: 20px;
-            text-align: center;
-            border: 2px solid var(--primary);
-        }
-        .close-btn {
+
+        /* شريط الأخبار المتحرك */
+        .news-ticker {
             background: var(--primary);
             color: black;
-            border: none;
-            padding: 10px 25px;
-            border-radius: 8px;
-            cursor: pointer;
-            margin-top: 20px;
+            padding: 10px 0;
             font-weight: bold;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+
+        /* الهيدر / القسم الرئيسي */
+        .hero-section {
+            height: 80vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: linear-gradient(rgba(0,0,0,0.6), rgba(0,0,0,0.6)), url('https://wallpaperaccess.com/full/1511.jpg');
+            background-size: cover;
+            background-attachment: fixed;
+            text-align: center;
+        }
+
+        .hero-card {
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            padding: 40px;
+            border-radius: 30px;
+            border: 1px solid rgba(255,255,255,0.2);
+            max-width: 600px;
+        }
+
+        /* تصميم الأقسام */
+        .section-title {
+            text-align: center;
+            padding: 50px 0;
+            font-size: 2.5rem;
+            color: var(--primary);
+            text-transform: uppercase;
+            letter-spacing: 2px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 30px;
+            padding: 20px;
+        }
+
+        /* بطاقة اللاعبين (3D Tilt) */
+        .player-card {
+            background: var(--card-bg);
+            border-radius: 20px;
+            padding: 20px;
+            text-align: center;
+            border-bottom: 4px solid var(--primary);
+            transform-style: preserve-3d;
+        }
+
+        .player-card img {
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            margin-bottom: 15px;
+            border: 3px solid var(--primary);
+        }
+
+        /* بطاقة البنايات (تصميم فخم) */
+        .build-card {
+            background: var(--card-bg);
+            border-radius: 15px;
+            overflow: hidden;
+            position: relative;
+            transition: 0.4s;
+        }
+
+        .build-card img {
+            width: 100%;
+            height: 200px;
+            object-fit: cover;
+        }
+
+        .build-info {
+            padding: 20px;
+        }
+
+        /* تأثيرات إضافية */
+        .btn-contact {
+            background: var(--primary);
+            color: black;
+            padding: 12px 30px;
+            border-radius: 50px;
+            text-decoration: none;
+            font-weight: bold;
+            display: inline-block;
+            margin-top: 20px;
+        }
+
+        #modal-overlay {
+            display:none; position:fixed; top:0; left:0; width:100%; height:100%;
+            background:rgba(0,0,0,0.9); z-index:2000; justify-content:center; align-items:center;
         }
     </style>
 </head>
 <body>
 
-<header>
-    <h1>سيرفر گوم كرافت ⚔️</h1>
-    <p>تصفح قائمة أعضاء الفريق وإنجازاتهم</p>
-</header>
-
-<div class="container" id="members-list">
-    </div>
-
-<div class="modal-overlay" id="overlay" onclick="closeModal()">
-    <div class="modal" onclick="event.stopPropagation()">
-        <img id="modal-img" src="" style="width:100px; margin-bottom:15px;">
-        <h2 id="modal-name"></h2>
-        <p id="modal-rank" style="color: var(--primary);"></p>
-        <hr style="border:0.5px solid #444">
-        <p id="modal-bio"></p>
-        <button class="close-btn" onclick="closeModal()">إغلاق</button>
-    </div>
+<div class="news-ticker">
+    <marquee id="news-text">أهلاً بكم في سيرفر گوم كرافت - ترقبوا أقوى البطولات القادمة!</marquee>
 </div>
+
+<section class="hero-section" id="hero">
+    <div class="hero-card" data-tilt>
+        <h1 id="hero-title">جاري التحميل...</h1>
+        <p id="hero-desc">المعلومات يتم جلبها من الجدول</p>
+        <a href="#players" class="btn-contact">اكتشف الأعضاء</a>
+    </div>
+</section>
+
+<h2 class="section-title" id="players">نخبة اللاعبين</h2>
+<div class="container" id="players-list"></div>
+
+<h2 class="section-title" id="builds">إبداعات گوم كرافت</h2>
+<div class="container" id="builds-list"></div>
 
 <script>
     const sheetID = '10RiRpOwdCtq8w_WwLJhUkUFxFPMkI595yiBqw2ET0pg';
     const url = `https://docs.google.com/spreadsheets/d/${sheetID}/gviz/tq?tqx=out:json`;
 
-    async function fetchData() {
-        try {
-            const res = await fetch(url);
-            const text = await res.text();
-            const json = JSON.parse(text.substr(47).slice(0, -2));
-            const rows = json.table.rows;
-            const container = document.getElementById('members-list');
+    async function init() {
+        const res = await fetch(url);
+        const text = await res.text();
+        const json = JSON.parse(text.substr(47).slice(0, -2));
+        const rows = json.table.rows;
 
-            rows.forEach((row, index) => {
-                // تخطي العناوين إذا كانت موجودة في الصف الأول
-                if(index === 0 && row.c[0]?.v === "الاسم") return;
+        // 1. تحديث القسم الرئيسي (نأخذ أول صف بعد العنوان كمثال للتعريف بالسيرفر)
+        document.getElementById('hero-title').innerText = rows[0].c[0].v;
+        document.getElementById('hero-desc').innerText = rows[0].c[2].v;
 
-                const name = row.c[0]?.v || "مجهول";
-                const rank = row.c[1]?.v || "عضو";
-                const bio = row.c[2]?.v || "لا توجد تفاصيل";
-                let imgData = row.c[3]?.v || ""; // العمود الرابع للصور
+        // 2. توزيع البيانات
+        const playersList = document.getElementById('players-list');
+        const buildsList = document.getElementById('builds-list');
 
-                // منطق معالجة الصور
-                let finalImg;
-                if(imgData.includes('http')) {
-                    finalImg = imgData; // إذا كان رابط مباشر
-                } else if(imgData.length > 2) {
-                    finalImg = `https://mc-heads.net/avatar/${imgData}`; // إذا كان اسم لاعب ماينكرافت
-                } else {
-                    finalImg = `https://api.dicebear.com/7.x/pixel-art/svg?seed=${name}`; // صورة افتراضية
-                }
+        rows.forEach((row, index) => {
+            if (index === 0) return; // تخطي العنوان
 
-                const card = document.createElement('div');
-                card.className = 'member-card';
-                card.innerHTML = `
-                    <div class="img-container">
-                        <img src="${finalImg}" alt="${name}">
-                    </div>
-                    <h3>${name}</h3>
-                    <p>${rank}</p>
-                `;
-                card.onclick = () => showModal(name, rank, bio, finalImg);
-                container.appendChild(card);
-            });
-        } catch (e) {
-            console.error("خطأ في التحميل:", e);
-        }
+            const type = row.c[4] ? row.c[4].v : 'لاعب'; // العمود E لتحديد النوع (لاعب أو بناية)
+            const name = row.c[0] ? row.c[0].v : '';
+            const desc = row.c[2] ? row.c[2].v : '';
+            const img = row.c[3] ? row.c[3].v : 'https://via.placeholder.com/150';
+
+            if (type === 'لاعب') {
+                const card = `
+                    <div class="player-card" data-tilt>
+                        <img src="${img}" alt="${name}">
+                        <h3>${name}</h3>
+                        <p>${row.c[1].v}</p>
+                        <small>${desc}</small>
+                    </div>`;
+                playersList.innerHTML += card;
+            } else if (type === 'بناية') {
+                const card = `
+                    <div class="build-card">
+                        <img src="${img}" alt="${name}">
+                        <div class="build-info">
+                            <h3>${name}</h3>
+                            <p>${desc}</p>
+                        </div>
+                    </div>`;
+                buildsList.innerHTML += card;
+            }
+        });
+
+        // تشغيل تأثير الـ 3D
+        VanillaTilt.init(document.querySelectorAll("[data-tilt]"), {
+            max: 15,
+            speed: 400,
+            glare: true,
+            "max-glare": 0.2,
+        });
     }
 
-    function showModal(name, rank, bio, img) {
-        document.getElementById('modal-name').innerText = name;
-        document.getElementById('modal-rank').innerText = rank;
-        document.getElementById('modal-bio').innerText = bio;
-        document.getElementById('modal-img').src = img;
-        document.getElementById('overlay').style.display = 'block';
-    }
-
-    function closeModal() {
-        document.getElementById('overlay').style.display = 'none';
-    }
-
-    fetchData();
+    init();
 </script>
-
 </body>
 </html>

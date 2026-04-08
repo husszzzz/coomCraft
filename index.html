@@ -3,77 +3,92 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Gom Craft Server | سيرفر گوم كرافت</title>
+    <title>Gom Craft | أعضاء السيرفر</title>
     <style>
         :root {
-            --primary: #2ecc71;
-            --dark: #1a1a1a;
-            --card-bg: #2d2d2d;
+            --primary: #55efc4; /* لون أخضر ماينكرافتي */
+            --accent: #fab1a0;
+            --bg: #121212;
+            --card: #1e1e1e;
         }
         body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background-color: var(--dark);
-            color: white;
+            font-family: 'Segoe UI', Tahoma, sans-serif;
+            background-color: var(--bg);
+            color: #ffffff;
             margin: 0;
-            padding: 20px;
+            padding: 0;
         }
         header {
             text-align: center;
-            padding: 50px 0;
-            background: linear-gradient(rgba(0,0,0,0.7), rgba(0,0,0,0.7)), url('https://wallpaperaccess.com/full/1511.jpg');
-            background-size: cover;
-            border-bottom: 4px solid var(--primary);
-            border-radius: 15px;
+            padding: 60px 20px;
+            background: linear-gradient(45deg, #000, #1a1a1a);
+            border-bottom: 3px solid var(--primary);
         }
         .container {
-            max-width: 1200px;
+            max-width: 1100px;
             margin: 40px auto;
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 20px;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 25px;
+            padding: 0 20px;
         }
         .member-card {
-            background: var(--card-bg);
+            background: var(--card);
             border-radius: 15px;
-            padding: 20px;
+            overflow: hidden;
+            transition: 0.3s;
+            border: 1px solid #333;
             text-align: center;
+            padding-bottom: 20px;
             cursor: pointer;
-            transition: transform 0.3s, border 0.3s;
-            border: 2px solid transparent;
         }
         .member-card:hover {
             transform: translateY(-10px);
+            box-shadow: 0 10px 20px rgba(85, 239, 196, 0.2);
             border-color: var(--primary);
         }
-        .member-card img {
-            width: 100px;
-            height: 100px;
-            border-radius: 50%;
-            background: #444;
+        .img-container {
+            background: #2d3436;
+            padding: 20px;
             margin-bottom: 15px;
         }
-        /* Modal Style */
-        #info-modal {
-            display: none;
-            position: fixed;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            background: #333;
-            padding: 30px;
-            border-radius: 20px;
-            box-shadow: 0 0 20px rgba(0,0,0,0.5);
-            z-index: 100;
-            width: 80%;
-            max-width: 500px;
-            text-align: center;
+        .member-card img {
+            width: 120px;
+            height: 120px;
+            border-radius: 10px;
+            object-fit: cover;
+            border: 2px solid var(--primary);
         }
-        .overlay {
+        /* النافذة المنبثقة */
+        .modal-overlay {
             display: none;
             position: fixed;
             top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(0,0,0,0.8);
-            z-index: 99;
+            background: rgba(0,0,0,0.9);
+            z-index: 1000;
+            backdrop-filter: blur(5px);
+        }
+        .modal {
+            position: fixed;
+            top: 50%; left: 50%;
+            transform: translate(-50%, -50%);
+            background: #222;
+            width: 90%;
+            max-width: 500px;
+            padding: 30px;
+            border-radius: 20px;
+            text-align: center;
+            border: 2px solid var(--primary);
+        }
+        .close-btn {
+            background: var(--primary);
+            color: black;
+            border: none;
+            padding: 10px 25px;
+            border-radius: 8px;
+            cursor: pointer;
+            margin-top: 20px;
+            font-weight: bold;
         }
     </style>
 </head>
@@ -81,64 +96,84 @@
 
 <header>
     <h1>سيرفر گوم كرافت ⚔️</h1>
-    <p>لوحة أعضاء السيرفر الرسمية</p>
+    <p>تصفح قائمة أعضاء الفريق وإنجازاتهم</p>
 </header>
 
 <div class="container" id="members-list">
     </div>
 
-<div class="overlay" id="overlay"></div>
-<div id="info-modal">
-    <h2 id="modal-name">اسم العضو</h2>
-    <p id="modal-rank" style="color: var(--primary); font-weight: bold;"></p>
-    <p id="modal-bio"></p>
-    <button onclick="closeModal()" style="padding: 10px 20px; cursor:pointer;">إغلاق</button>
+<div class="modal-overlay" id="overlay" onclick="closeModal()">
+    <div class="modal" onclick="event.stopPropagation()">
+        <img id="modal-img" src="" style="width:100px; margin-bottom:15px;">
+        <h2 id="modal-name"></h2>
+        <p id="modal-rank" style="color: var(--primary);"></p>
+        <hr style="border:0.5px solid #444">
+        <p id="modal-bio"></p>
+        <button class="close-btn" onclick="closeModal()">إغلاق</button>
+    </div>
 </div>
 
 <script>
-    // رابط الجدول الخاص بك بصيغة CSV لسهولة القراءة
     const sheetID = '10RiRpOwdCtq8w_WwLJhUkUFxFPMkI595yiBqw2ET0pg';
     const url = `https://docs.google.com/spreadsheets/d/${sheetID}/gviz/tq?tqx=out:json`;
 
-    async function loadMembers() {
-        const response = await fetch(url);
-        const text = await response.text();
-        const json = JSON.parse(text.substr(47).slice(0, -2));
-        const rows = json.table.rows;
+    async function fetchData() {
+        try {
+            const res = await fetch(url);
+            const text = await res.text();
+            const json = JSON.parse(text.substr(47).slice(0, -2));
+            const rows = json.table.rows;
+            const container = document.getElementById('members-list');
 
-        const container = document.getElementById('members-list');
-        
-        rows.forEach(row => {
-            const name = row.c[0] ? row.c[0].v : '';
-            const rank = row.c[1] ? row.c[1].v : '';
-            const bio = row.c[2] ? row.c[2].v : '';
+            rows.forEach((row, index) => {
+                // تخطي العناوين إذا كانت موجودة في الصف الأول
+                if(index === 0 && row.c[0]?.v === "الاسم") return;
 
-            const card = document.createElement('div');
-            card.className = 'member-card';
-            card.innerHTML = `
-                <img src="https://api.dicebear.com/7.x/avataaars/svg?seed=${name}" alt="avatar">
-                <h3>${name}</h3>
-                <p>${rank}</p>
-            `;
-            card.onclick = () => showInfo(name, rank, bio);
-            container.appendChild(card);
-        });
+                const name = row.c[0]?.v || "مجهول";
+                const rank = row.c[1]?.v || "عضو";
+                const bio = row.c[2]?.v || "لا توجد تفاصيل";
+                let imgData = row.c[3]?.v || ""; // العمود الرابع للصور
+
+                // منطق معالجة الصور
+                let finalImg;
+                if(imgData.includes('http')) {
+                    finalImg = imgData; // إذا كان رابط مباشر
+                } else if(imgData.length > 2) {
+                    finalImg = `https://mc-heads.net/avatar/${imgData}`; // إذا كان اسم لاعب ماينكرافت
+                } else {
+                    finalImg = `https://api.dicebear.com/7.x/pixel-art/svg?seed=${name}`; // صورة افتراضية
+                }
+
+                const card = document.createElement('div');
+                card.className = 'member-card';
+                card.innerHTML = `
+                    <div class="img-container">
+                        <img src="${finalImg}" alt="${name}">
+                    </div>
+                    <h3>${name}</h3>
+                    <p>${rank}</p>
+                `;
+                card.onclick = () => showModal(name, rank, bio, finalImg);
+                container.appendChild(card);
+            });
+        } catch (e) {
+            console.error("خطأ في التحميل:", e);
+        }
     }
 
-    function showInfo(name, rank, bio) {
+    function showModal(name, rank, bio, img) {
         document.getElementById('modal-name').innerText = name;
         document.getElementById('modal-rank').innerText = rank;
         document.getElementById('modal-bio').innerText = bio;
-        document.getElementById('info-modal').style.display = 'block';
+        document.getElementById('modal-img').src = img;
         document.getElementById('overlay').style.display = 'block';
     }
 
     function closeModal() {
-        document.getElementById('info-modal').style.display = 'none';
         document.getElementById('overlay').style.display = 'none';
     }
 
-    loadMembers();
+    fetchData();
 </script>
 
 </body>

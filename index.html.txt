@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gom Craft Server | سيرفر گوم كرافت</title>
+    <style>
+        :root {
+            --primary: #2ecc71;
+            --dark: #1a1a1a;
+            --card-bg: #2d2d2d;
+        }
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--dark);
+            color: white;
+            margin: 0;
+            padding: 20px;
+        }
+        header {
+            text-align: center;
+            padding: 50px 0;
+            background: linear-gradient(rgba(0,0,0,0.7), rgba(0,0,0,0.7)), url('https://wallpaperaccess.com/full/1511.jpg');
+            background-size: cover;
+            border-bottom: 4px solid var(--primary);
+            border-radius: 15px;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 40px auto;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+        }
+        .member-card {
+            background: var(--card-bg);
+            border-radius: 15px;
+            padding: 20px;
+            text-align: center;
+            cursor: pointer;
+            transition: transform 0.3s, border 0.3s;
+            border: 2px solid transparent;
+        }
+        .member-card:hover {
+            transform: translateY(-10px);
+            border-color: var(--primary);
+        }
+        .member-card img {
+            width: 100px;
+            height: 100px;
+            border-radius: 50%;
+            background: #444;
+            margin-bottom: 15px;
+        }
+        /* Modal Style */
+        #info-modal {
+            display: none;
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: #333;
+            padding: 30px;
+            border-radius: 20px;
+            box-shadow: 0 0 20px rgba(0,0,0,0.5);
+            z-index: 100;
+            width: 80%;
+            max-width: 500px;
+            text-align: center;
+        }
+        .overlay {
+            display: none;
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.8);
+            z-index: 99;
+        }
+    </style>
+</head>
+<body>
+
+<header>
+    <h1>سيرفر گوم كرافت ⚔️</h1>
+    <p>لوحة أعضاء السيرفر الرسمية</p>
+</header>
+
+<div class="container" id="members-list">
+    </div>
+
+<div class="overlay" id="overlay"></div>
+<div id="info-modal">
+    <h2 id="modal-name">اسم العضو</h2>
+    <p id="modal-rank" style="color: var(--primary); font-weight: bold;"></p>
+    <p id="modal-bio"></p>
+    <button onclick="closeModal()" style="padding: 10px 20px; cursor:pointer;">إغلاق</button>
+</div>
+
+<script>
+    // رابط الجدول الخاص بك بصيغة CSV لسهولة القراءة
+    const sheetID = '10RiRpOwdCtq8w_WwLJhUkUFxFPMkI595yiBqw2ET0pg';
+    const url = `https://docs.google.com/spreadsheets/d/${sheetID}/gviz/tq?tqx=out:json`;
+
+    async function loadMembers() {
+        const response = await fetch(url);
+        const text = await response.text();
+        const json = JSON.parse(text.substr(47).slice(0, -2));
+        const rows = json.table.rows;
+
+        const container = document.getElementById('members-list');
+        
+        rows.forEach(row => {
+            const name = row.c[0] ? row.c[0].v : '';
+            const rank = row.c[1] ? row.c[1].v : '';
+            const bio = row.c[2] ? row.c[2].v : '';
+
+            const card = document.createElement('div');
+            card.className = 'member-card';
+            card.innerHTML = `
+                <img src="https://api.dicebear.com/7.x/avataaars/svg?seed=${name}" alt="avatar">
+                <h3>${name}</h3>
+                <p>${rank}</p>
+            `;
+            card.onclick = () => showInfo(name, rank, bio);
+            container.appendChild(card);
+        });
+    }
+
+    function showInfo(name, rank, bio) {
+        document.getElementById('modal-name').innerText = name;
+        document.getElementById('modal-rank').innerText = rank;
+        document.getElementById('modal-bio').innerText = bio;
+        document.getElementById('info-modal').style.display = 'block';
+        document.getElementById('overlay').style.display = 'block';
+    }
+
+    function closeModal() {
+        document.getElementById('info-modal').style.display = 'none';
+        document.getElementById('overlay').style.display = 'none';
+    }
+
+    loadMembers();
+</script>
+
+</body>
+</html>

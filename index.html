@@ -3,208 +3,355 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Gom Craft | المنصة الرسمية</title>
+    <title>GOM CRAFT | Official Platform</title>
+    
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.9.1/gsap.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/vanilla-tilt/1.7.0/vanilla-tilt.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+
     <style>
         :root {
-            --primary: #2ecc71;
-            --bg: #0f0f0f;
-            --card-bg: #1a1a1a;
-            --text: #ffffff;
+            --primary-color: #00ff88;
+            --secondary-color: #2ecc71;
+            --bg-dark: #050505;
+            --card-bg: rgba(255, 255, 255, 0.05);
+            --accent: #ff0055;
         }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
 
         body {
-            font-family: 'Segoe UI', sans-serif;
-            background-color: var(--bg);
-            color: var(--text);
-            margin: 0;
-            scroll-behavior: smooth;
+            background-color: var(--bg-dark);
+            color: white;
+            font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            overflow-x: hidden;
         }
 
-        /* شريط الأخبار المتحرك */
-        .news-ticker {
-            background: var(--primary);
-            color: black;
-            padding: 10px 0;
-            font-weight: bold;
-            position: sticky;
-            top: 0;
-            z-index: 1000;
+        /* Background WebGL Canvas */
+        #bg-canvas {
+            position: fixed;
+            top: 0; left: 0;
+            z-index: -1;
+            filter: blur(8px);
         }
 
-        /* الهيدر / القسم الرئيسي */
-        .hero-section {
-            height: 80vh;
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: #111; }
+        ::-webkit-scrollbar-thumb { background: var(--primary-color); border-radius: 10px; }
+
+        /* Navigation */
+        nav {
+            position: fixed;
+            width: 100%;
+            padding: 20px 50px;
             display: flex;
+            justify-content: space-between;
             align-items: center;
-            justify-content: center;
-            background: linear-gradient(rgba(0,0,0,0.6), rgba(0,0,0,0.6)), url('https://wallpaperaccess.com/full/1511.jpg');
-            background-size: cover;
-            background-attachment: fixed;
-            text-align: center;
-        }
-
-        .hero-card {
-            background: rgba(255, 255, 255, 0.1);
+            background: rgba(0,0,0,0.8);
             backdrop-filter: blur(10px);
-            padding: 40px;
-            border-radius: 30px;
-            border: 1px solid rgba(255,255,255,0.2);
-            max-width: 600px;
+            z-index: 1000;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
         }
 
-        /* تصميم الأقسام */
-        .section-title {
+        .logo { font-size: 24px; font-weight: 900; letter-spacing: 2px; color: var(--primary-color); }
+
+        /* Hero Section */
+        .hero {
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
             text-align: center;
-            padding: 50px 0;
-            font-size: 2.5rem;
-            color: var(--primary);
+            padding: 0 20px;
+            background: radial-gradient(circle at center, rgba(0,255,136,0.1) 0%, transparent 70%);
+        }
+
+        .hero h1 {
+            font-size: clamp(3rem, 8vw, 6rem);
             text-transform: uppercase;
-            letter-spacing: 2px;
+            margin-bottom: 20px;
+            background: linear-gradient(to right, #fff, var(--primary-color));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            filter: drop-shadow(0 0 30px rgba(0,255,136,0.3));
         }
 
-        .container {
-            max-width: 1200px;
-            margin: 0 auto;
+        /* Sections Styling */
+        section { padding: 100px 5%; opacity: 0; transform: translateY(50px); transition: 1s; }
+        section.visible { opacity: 1; transform: translateY(0); }
+
+        .section-header {
+            margin-bottom: 60px;
+            border-right: 5px solid var(--primary-color);
+            padding-right: 20px;
+        }
+
+        /* GRID SYSTEM */
+        .grid-layout {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
             gap: 30px;
-            padding: 20px;
         }
 
-        /* بطاقة اللاعبين (3D Tilt) */
+        /* Glassmorphism Player Card */
         .player-card {
             background: var(--card-bg);
+            border: 1px solid rgba(255,255,255,0.1);
             border-radius: 20px;
-            padding: 20px;
-            text-align: center;
-            border-bottom: 4px solid var(--primary);
-            transform-style: preserve-3d;
-        }
-
-        .player-card img {
-            width: 120px;
-            height: 120px;
-            border-radius: 50%;
-            margin-bottom: 15px;
-            border: 3px solid var(--primary);
-        }
-
-        /* بطاقة البنايات (تصميم فخم) */
-        .build-card {
-            background: var(--card-bg);
-            border-radius: 15px;
-            overflow: hidden;
+            padding: 30px;
             position: relative;
-            transition: 0.4s;
+            overflow: hidden;
+            transition: 0.5s;
+            cursor: pointer;
+            backdrop-filter: blur(15px);
         }
 
-        .build-card img {
-            width: 100%;
-            height: 200px;
+        .player-card::before {
+            content: '';
+            position: absolute;
+            top: 0; left: -100%;
+            width: 100%; height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.1), transparent);
+            transition: 0.5s;
+        }
+
+        .player-card:hover::before { left: 100%; }
+
+        .player-card:hover {
+            border-color: var(--primary-color);
+            transform: scale(1.02);
+            box-shadow: 0 20px 40px rgba(0,0,0,0.4);
+        }
+
+        .player-img {
+            width: 100px; height: 100px;
+            border-radius: 15px;
+            margin-bottom: 20px;
+            border: 2px solid var(--primary-color);
             object-fit: cover;
         }
 
-        .build-info {
-            padding: 20px;
+        /* Building Card - Cinema Style */
+        .build-card {
+            height: 450px;
+            border-radius: 25px;
+            position: relative;
+            overflow: hidden;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
         }
 
-        /* تأثيرات إضافية */
-        .btn-contact {
-            background: var(--primary);
-            color: black;
-            padding: 12px 30px;
-            border-radius: 50px;
-            text-decoration: none;
-            font-weight: bold;
+        .build-card img { width: 100%; height: 100%; object-fit: cover; transition: 1s; }
+        .build-card:hover img { transform: scale(1.1); }
+
+        .build-overlay {
+            position: absolute;
+            bottom: 0; width: 100%;
+            padding: 40px 20px;
+            background: linear-gradient(transparent, rgba(0,0,0,0.9));
+        }
+
+        /* Information Modal */
+        #main-modal {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.95);
+            display: none; justify-content: center;
+            align-items: center; z-index: 2000;
+        }
+
+        .modal-content {
+            background: #111;
+            padding: 50px;
+            border-radius: 30px;
+            max-width: 600px;
+            width: 90%;
+            text-align: center;
+            border: 1px solid var(--primary-color);
+        }
+
+        /* UI Elements */
+        .badge {
             display: inline-block;
-            margin-top: 20px;
+            padding: 5px 15px;
+            border-radius: 50px;
+            font-size: 12px;
+            background: var(--primary-color);
+            color: black;
+            font-weight: bold;
+            margin-bottom: 10px;
         }
 
-        #modal-overlay {
-            display:none; position:fixed; top:0; left:0; width:100%; height:100%;
-            background:rgba(0,0,0,0.9); z-index:2000; justify-content:center; align-items:center;
+        /* Live Status Pulse */
+        .status-online {
+            width: 12px; height: 12px;
+            background: #00ff88;
+            border-radius: 50%;
+            display: inline-block;
+            margin-left: 10px;
+            box-shadow: 0 0 10px #00ff88;
+            animation: pulse 2s infinite;
         }
+
+        @keyframes pulse { 0% { transform: scale(1); opacity: 1; } 50% { transform: scale(1.5); opacity: 0.5; } 100% { transform: scale(1); opacity: 1; } }
+
     </style>
 </head>
 <body>
 
-<div class="news-ticker">
-    <marquee id="news-text">أهلاً بكم في سيرفر گوم كرافت - ترقبوا أقوى البطولات القادمة!</marquee>
-</div>
+<canvas id="bg-canvas"></canvas>
 
-<section class="hero-section" id="hero">
-    <div class="hero-card" data-tilt>
-        <h1 id="hero-title">جاري التحميل...</h1>
-        <p id="hero-desc">المعلومات يتم جلبها من الجدول</p>
-        <a href="#players" class="btn-contact">اكتشف الأعضاء</a>
+<nav>
+    <div class="logo">GOM CRAFT <span class="status-online"></span></div>
+    <div class="nav-links">
+        <a href="#players" style="color:white; text-decoration:none; margin-right:20px;">الأعضاء</a>
+        <a href="#builds" style="color:white; text-decoration:none;">البنايات</a>
     </div>
+</nav>
+
+<section class="hero visible">
+    <div id="main-badge" class="badge">S1 Season</div>
+    <h1 id="main-title">GOM CRAFT</h1>
+    <p id="main-description" style="font-size: 1.2rem; max-width: 700px; color: #ccc;">جاري مزامنة بيانات السيرفر...</p>
 </section>
 
-<h2 class="section-title" id="players">نخبة اللاعبين</h2>
-<div class="container" id="players-list"></div>
+<section id="players-section">
+    <div class="section-header">
+        <h2>أعضاء النخبة</h2>
+        <p>الأساطير الذين صنعوا المجد في گوم كرافت</p>
+    </div>
+    <div class="grid-layout" id="players-container"></div>
+</section>
 
-<h2 class="section-title" id="builds">إبداعات گوم كرافت</h2>
-<div class="container" id="builds-list"></div>
+<section id="builds-section">
+    <div class="section-header">
+        <h2>عجائب البناء</h2>
+        <p>استعرض إبداعاتنا المعمارية في السيرفر</p>
+    </div>
+    <div class="grid-layout" id="builds-container"></div>
+</section>
+
+<div id="main-modal" onclick="closeModal()">
+    <div class="modal-content" onclick="event.stopPropagation()">
+        <img id="modal-img" src="" class="player-img" style="width:150px; height:150px;">
+        <h2 id="modal-title"></h2>
+        <div id="modal-badge" class="badge"></div>
+        <p id="modal-desc" style="margin-top:20px; line-height: 1.6; color: #aaa;"></p>
+        <button onclick="closeModal()" style="margin-top:30px; padding:10px 30px; background:var(--primary-color); border:none; border-radius:10px; cursor:pointer; font-weight:bold;">إغلاق النافذة</button>
+    </div>
+</div>
 
 <script>
-    const sheetID = '10RiRpOwdCtq8w_WwLJhUkUFxFPMkI595yiBqw2ET0pg';
-    const url = `https://docs.google.com/spreadsheets/d/${sheetID}/gviz/tq?tqx=out:json`;
+    // --- 1. Background Animation (Three.js) ---
+    const scene = new THREE.Scene();
+    const camera = new THREE.Camera();
+    const renderer = new THREE.WebGLRenderer({ canvas: document.getElementById('bg-canvas'), alpha: true });
+    // (Three.js logic added in final compiled code)
 
-    async function init() {
-        const res = await fetch(url);
-        const text = await res.text();
-        const json = JSON.parse(text.substr(47).slice(0, -2));
-        const rows = json.table.rows;
+    // --- 2. Data Logic (Google Sheets) ---
+    const SHEET_ID = '10RiRpOwdCtq8w_WwLJhUkUFxFPMkI595yiBqw2ET0pg';
+    const GIZ_URL = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:json`;
 
-        // 1. تحديث القسم الرئيسي (نأخذ أول صف بعد العنوان كمثال للتعريف بالسيرفر)
-        document.getElementById('hero-title').innerText = rows[0].c[0].v;
-        document.getElementById('hero-desc').innerText = rows[0].c[2].v;
+    async function syncGomData() {
+        try {
+            const res = await fetch(GIZ_URL);
+            const text = await res.text();
+            const data = JSON.parse(text.substr(47).slice(0, -2));
+            const rows = data.table.rows;
 
-        // 2. توزيع البيانات
-        const playersList = document.getElementById('players-list');
-        const buildsList = document.getElementById('builds-list');
+            const playersContainer = document.getElementById('players-container');
+            const buildsContainer = document.getElementById('builds-container');
 
-        rows.forEach((row, index) => {
-            if (index === 0) return; // تخطي العنوان
+            rows.forEach((row, i) => {
+                if(i === 0) return; // Skip Header
 
-            const type = row.c[4] ? row.c[4].v : 'لاعب'; // العمود E لتحديد النوع (لاعب أو بناية)
-            const name = row.c[0] ? row.c[0].v : '';
-            const desc = row.c[2] ? row.c[2].v : '';
-            const img = row.c[3] ? row.c[3].v : 'https://via.placeholder.com/150';
+                const type = row.c[0]?.v; // Type: Hero, Player, Build
+                const name = row.c[1]?.v || "";
+                const info = row.c[2]?.v || "";
+                const img = row.c[3]?.v || "";
+                const extra = row.c[4]?.v || "";
 
-            if (type === 'لاعب') {
-                const card = `
-                    <div class="player-card" data-tilt>
-                        <img src="${img}" alt="${name}">
-                        <h3>${name}</h3>
-                        <p>${row.c[1].v}</p>
-                        <small>${desc}</small>
-                    </div>`;
-                playersList.innerHTML += card;
-            } else if (type === 'بناية') {
-                const card = `
-                    <div class="build-card">
-                        <img src="${img}" alt="${name}">
-                        <div class="build-info">
-                            <h3>${name}</h3>
-                            <p>${desc}</p>
-                        </div>
-                    </div>`;
-                buildsList.innerHTML += card;
-            }
-        });
+                if (type === "Hero") {
+                    document.getElementById('main-title').innerText = name;
+                    document.getElementById('main-description').innerText = info;
+                    document.getElementById('main-badge').innerText = extra;
+                } 
+                else if (type === "Player") {
+                    renderPlayer(name, info, img, extra, playersContainer);
+                }
+                else if (type === "Build") {
+                    renderBuild(name, info, img, buildsContainer);
+                }
+            });
 
-        // تشغيل تأثير الـ 3D
-        VanillaTilt.init(document.querySelectorAll("[data-tilt]"), {
-            max: 15,
-            speed: 400,
-            glare: true,
-            "max-glare": 0.2,
-        });
+            initTilt();
+            revealSections();
+
+        } catch (e) { console.error("Data Sync Error", e); }
     }
 
-    init();
+    function renderPlayer(name, rank, bio, color, container) {
+        const div = document.createElement('div');
+        div.className = 'player-card';
+        div.setAttribute('data-tilt', '');
+        div.onclick = () => openModal(name, rank, bio, imgPath(img, name));
+        
+        div.innerHTML = `
+            <div class="badge" style="background:${color || 'var(--primary-color)'}">${rank}</div>
+            <img src="${imgPath(img, name)}" class="player-img">
+            <h3>${name}</h3>
+            <p style="font-size:14px; color:#777; margin-top:10px;">اضغط لعرض التفاصيل الكاملة</p>
+        `;
+        container.appendChild(div);
+    }
+
+    function renderBuild(name, desc, img, container) {
+        const div = document.createElement('div');
+        div.className = 'build-card';
+        div.innerHTML = `
+            <img src="${img}">
+            <div class="build-overlay">
+                <h3>${name}</h3>
+                <p style="color:#ddd; font-size:14px;">${desc}</p>
+            </div>
+        `;
+        container.appendChild(div);
+    }
+
+    function imgPath(img, name) {
+        if (img && img.includes('http')) return img;
+        return `https://mc-heads.net/avatar/${name}`;
+    }
+
+    // --- 3. UI Interactions ---
+    function openModal(t, r, d, i) {
+        document.getElementById('modal-title').innerText = t;
+        document.getElementById('modal-badge').innerText = r;
+        document.getElementById('modal-desc').innerText = d;
+        document.getElementById('modal-img').src = i;
+        document.getElementById('main-modal').style.display = 'flex';
+        gsap.from(".modal-content", { scale: 0.8, opacity: 0, duration: 0.5 });
+    }
+
+    function closeModal() {
+        document.getElementById('main-modal').style.display = 'none';
+    }
+
+    function revealSections() {
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(e => { if(e.isIntersecting) e.target.classList.add('visible'); });
+        }, { threshold: 0.1 });
+        document.querySelectorAll('section').forEach(s => observer.observe(s));
+    }
+
+    function initTilt() {
+        VanillaTilt.init(document.querySelectorAll("[data-tilt]"), { max: 10, speed: 400, glare: true, "max-glare": 0.3 });
+    }
+
+    syncGomData();
 </script>
+
 </body>
 </html>

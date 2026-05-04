@@ -3,388 +3,283 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>مطعم تجريب - المود الأسطوري</title>
+    <title>Hassany IPA | متجر تطبيقات</title>
+    <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700;900&display=swap" rel="stylesheet">
     
     <style>
         :root {
-            --primary-gold: #c5a059;
-            --dark-bg: #0a0a0a;
-            --card-bg: rgba(255, 255, 255, 0.05);
-            --text-white: #ffffff;
+            --bg-color: #050505;
+            --card-bg: rgba(25, 25, 25, 0.8);
+            --primary-color: #007aff;
+            --text-main: #ffffff;
+            --text-muted: #8e8e93;
+            --border-color: rgba(255, 255, 255, 0.1);
         }
 
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
-            font-family: 'Cairo', sans-serif;
-            scroll-behavior: smooth;
+            font-family: 'Tajawal', sans-serif;
+            -webkit-tap-highlight-color: transparent;
         }
 
         body {
-            background-color: var(--dark-bg);
-            color: var(--text-white);
-            overflow-x: hidden;
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            background-image: radial-gradient(circle at 50% 0%, rgba(0, 122, 255, 0.15) 0%, transparent 50%);
+            min-height: 100vh;
         }
 
-        /* هيدر أسطوري */
+        /* شريط التنقل العلوي */
         header {
-            position: fixed;
-            top: 0; width: 100%;
             padding: 20px 5%;
-            background: rgba(10, 10, 10, 0.8);
-            backdrop-filter: blur(10px);
             display: flex;
             justify-content: space-between;
             align-items: center;
-            z-index: 1000;
-            border-bottom: 1px solid rgba(197, 160, 89, 0.2);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border-bottom: 1px solid var(--border-color);
+            position: sticky;
+            top: 0;
+            z-index: 100;
         }
 
         .logo {
-            font-size: 1.8rem;
-            font-weight: 900;
-            color: var(--primary-gold);
-            text-transform: uppercase;
-            letter-spacing: 2px;
-        }
-
-        .cart-icon {
-            position: relative;
-            cursor: pointer;
-            font-size: 1.5rem;
-        }
-
-        .cart-count {
-            position: absolute;
-            top: -10px; right: -10px;
-            background: var(--primary-gold);
-            color: #000;
-            width: 20px; height: 20px;
-            border-radius: 50%;
+            font-size: 24px;
+            font-weight: 800;
+            color: var(--text-main);
+            text-decoration: none;
             display: flex;
-            justify-content: center;
             align-items: center;
-            font-size: 0.8rem;
-            font-weight: bold;
+            gap: 10px;
         }
 
-        /* قسم الترحيب */
+        .logo i {
+            color: var(--primary-color);
+        }
+
+        .telegram-btn {
+            background: rgba(0, 136, 204, 0.1);
+            color: #0088cc;
+            padding: 8px 20px;
+            border-radius: 20px;
+            text-decoration: none;
+            font-weight: 700;
+            border: 1px solid rgba(0, 136, 204, 0.3);
+            transition: 0.3s;
+        }
+
+        .telegram-btn:hover {
+            background: #0088cc;
+            color: #fff;
+        }
+
+        /* القسم الترحيبي */
         .hero {
-            height: 60vh;
-            background: linear-gradient(rgba(0,0,0,0.7), rgba(0,0,0,0.7)), url('https://images.unsplash.com/photo-1514362545857-3bc16c4c7d1b?ixlib=rb-4.0.3&auto=format&fit=crop&w=1350&q=80') center/cover;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
             text-align: center;
-            padding-top: 80px;
+            padding: 60px 20px;
         }
 
         .hero h1 {
-            font-size: 3.5rem;
-            margin-bottom: 10px;
-            color: var(--primary-gold);
-            text-shadow: 0 0 20px rgba(197, 160, 89, 0.5);
+            font-size: 2.5rem;
+            margin-bottom: 15px;
+            background: linear-gradient(90deg, #fff, #8e8e93);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
         }
 
-        /* تصنيفات الأكل */
-        .categories {
-            display: flex;
-            justify-content: center;
-            gap: 15px;
-            padding: 30px 10px;
-            overflow-x: auto;
-            position: sticky;
-            top: 80px;
-            background: var(--dark-bg);
-            z-index: 900;
+        .hero p {
+            color: var(--text-muted);
+            font-size: 1.1rem;
+            margin-bottom: 30px;
         }
 
-        .cat-btn {
-            padding: 10px 25px;
-            border-radius: 30px;
-            border: 1px solid var(--primary-gold);
-            background: transparent;
-            color: #fff;
-            cursor: pointer;
-            white-space: nowrap;
-            transition: 0.3s;
-        }
-
-        .cat-btn.active, .cat-btn:hover {
-            background: var(--primary-gold);
-            color: #000;
-        }
-
-        /* قائمة الطعام */
-        .menu-grid {
+        /* شبكة التطبيقات */
+        .apps-container {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-            gap: 25px;
-            padding: 40px 5%;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 20px;
+            padding: 0 5% 60px;
+            max-width: 1200px;
+            margin: 0 auto;
         }
 
-        .menu-item {
+        /* تصميم كرت التطبيق (تأثير الزجاج) */
+        .app-card {
             background: var(--card-bg);
-            border-radius: 25px;
-            padding: 20px;
-            border: 1px solid rgba(255,255,255,0.05);
-            transition: 0.4s;
-            position: relative;
-            overflow: hidden;
-        }
-
-        .menu-item:hover {
-            transform: translateY(-10px);
-            border-color: var(--primary-gold);
-            box-shadow: 0 10px 30px rgba(197, 160, 89, 0.1);
-        }
-
-        .menu-item img {
-            width: 100%;
-            height: 180px;
+            border: 1px solid var(--border-color);
             border-radius: 20px;
-            object-fit: cover;
-            margin-bottom: 15px;
+            padding: 20px;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
         }
 
-        .menu-item h3 {
-            font-size: 1.4rem;
-            margin-bottom: 10px;
+        .app-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.5);
+            border-color: rgba(0, 122, 255, 0.3);
         }
 
-        .menu-item p {
-            font-size: 0.9rem;
-            color: #aaa;
-            margin-bottom: 15px;
-            height: 40px;
+        .app-icon {
+            width: 70px;
+            height: 70px;
+            border-radius: 18px;
+            background: linear-gradient(135deg, #1e1e1e, #2d2d2d);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 30px;
+            color: var(--primary-color);
+            box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+            flex-shrink: 0;
             overflow: hidden;
         }
 
-        .price-row {
+        .app-icon img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .app-info {
+            flex-grow: 1;
+        }
+
+        .app-title {
+            font-size: 1.1rem;
+            font-weight: 700;
+            margin-bottom: 5px;
+        }
+
+        .app-version {
+            font-size: 0.85rem;
+            color: var(--text-muted);
+            margin-bottom: 8px;
+        }
+
+        .app-status {
+            font-size: 0.75rem;
+            color: #32d74b; /* لون أخضر للشهادة الشغالة */
             display: flex;
-            justify-content: space-between;
             align-items: center;
+            gap: 4px;
         }
 
-        .price {
-            color: var(--primary-gold);
-            font-size: 1.3rem;
-            font-weight: bold;
+        .app-status i {
+            font-size: 10px;
         }
 
-        .add-btn {
-            background: var(--primary-gold);
-            color: #000;
+        /* زر التحميل (GET) */
+        .get-btn {
+            background: rgba(255, 255, 255, 0.1);
+            color: var(--primary-color);
+            padding: 8px 24px;
+            border-radius: 20px;
+            text-decoration: none;
+            font-weight: 700;
+            font-size: 0.9rem;
             border: none;
-            padding: 8px 15px;
-            border-radius: 12px;
             cursor: pointer;
-            font-weight: bold;
             transition: 0.3s;
         }
 
-        .add-btn:hover { transform: scale(1.1); }
-
-        /* عربة التسوق (Modal) */
-        #cart-modal {
-            position: fixed;
-            inset: 0;
-            background: rgba(0,0,0,0.9);
-            display: none;
-            justify-content: center;
-            align-items: center;
-            z-index: 2000;
-            padding: 20px;
-        }
-
-        .cart-content {
-            background: #151515;
-            width: 100%;
-            max-width: 500px;
-            border-radius: 30px;
-            padding: 30px;
-            max-height: 90vh;
-            overflow-y: auto;
-            border: 1px solid var(--primary-gold);
-        }
-
-        .cart-item {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 15px 0;
-            border-bottom: 1px solid rgba(255,255,255,0.1);
-        }
-
-        .notes-area {
-            width: 100%;
-            background: #222;
-            border: 1px solid #444;
+        .get-btn:hover {
+            background: var(--primary-color);
             color: #fff;
-            padding: 10px;
-            border-radius: 10px;
-            margin: 20px 0;
-            resize: none;
         }
 
-        .checkout-btn {
-            width: 100%;
-            background: var(--primary-gold);
-            color: #000;
-            padding: 15px;
-            border-radius: 15px;
-            border: none;
-            font-size: 1.2rem;
-            font-weight: bold;
-            cursor: pointer;
+        /* الفوتر */
+        footer {
+            text-align: center;
+            padding: 30px;
+            color: var(--text-muted);
+            border-top: 1px solid var(--border-color);
+            font-size: 0.9rem;
         }
 
-        .close-cart {
-            float: left;
-            cursor: pointer;
-            font-size: 1.5rem;
+        /* للكمبيوترات والهواتف */
+        @media (max-width: 600px) {
+            .hero h1 { font-size: 2rem; }
+            .apps-container { grid-template-columns: 1fr; }
         }
-
     </style>
 </head>
 <body>
 
     <header>
-        <div class="logo">مطعم تجريب</div>
-        <div class="cart-icon" onclick="toggleCart()">
-            <i class="fas fa-shopping-basket"></i>
-            <span class="cart-count" id="cart-count">0</span>
-        </div>
+        <a href="#" class="logo"><i class="fa-brands fa-apple"></i> Hassany IPA</a>
+        <a href="https://t.me/hassanyIPA" target="_blank" class="telegram-btn">
+            <i class="fa-brands fa-telegram"></i> قناتنا
+        </a>
     </header>
 
-    <section class="hero">
-        <h1>مرحباً بك في عالم النكهات</h1>
-        <p>تذوق الرفاهية في كل لقمة</p>
-    </section>
-
-    <div class="categories">
-        <button class="cat-btn active">الكل</button>
-        <button class="cat-btn">برجر</button>
-        <button class="cat-btn">بيتزا</button>
-        <button class="cat-btn">باستا</button>
-        <button class="cat-btn">مشروبات</button>
+    <div class="hero">
+        <h1>أقوى متجر تطبيقات وملفات IPA</h1>
+        <p>حمّل أحدث التطبيقات المعدلة والألعاب بأعلى سرعة وبدون إعلانات مزعجة.</p>
     </div>
 
-    <main class="menu-grid" id="menu-container">
-        </main>
-
-    <div id="cart-modal">
-        <div class="cart-content">
-            <span class="close-cart" onclick="toggleCart()">&times;</span>
-            <h2 style="margin-bottom: 20px;">طلباتك المختارة</h2>
-            <div id="cart-items-list">
-                </div>
-            <div style="margin-top: 20px; font-size: 1.2rem; display: flex; justify-content: space-between;">
-                <span>المجموع الكلي:</span>
-                <span id="total-price" style="color: var(--primary-gold); font-weight: bold;">0 د.ع</span>
+    <div class="apps-container">
+        
+        <div class="app-card">
+            <div class="app-icon">
+                <i class="fa-solid fa-microphone-lines"></i>
             </div>
-            <textarea class="notes-area" id="order-notes" placeholder="أضف ملاحظاتك هنا (مثلاً: بدون شطة، زيادة صوص...)"></textarea>
-            <button class="checkout-btn" onclick="sendToWhatsApp()">تأكيد الطلب عبر واتساب</button>
+            <div class="app-info">
+                <div class="app-title">تطبيق المايك المحسن</div>
+                <div class="app-version">v2.1 | 45 MB</div>
+                <div class="app-status"><i class="fa-solid fa-circle-check"></i> تعمل بدون جيلبريك</div>
+            </div>
+            <a href="رابط_رسالة_التليجرام_هنا" class="get-btn">GET</a>
         </div>
+
+        <div class="app-card">
+            <div class="app-icon">
+                <i class="fa-solid fa-ghost"></i>
+            </div>
+            <div class="app-info">
+                <div class="app-title">لعبة البيت المهجور</div>
+                <div class="app-version">v1.0.5 | 210 MB</div>
+                <div class="app-status"><i class="fa-solid fa-circle-check"></i> شهادة مستقرة</div>
+            </div>
+            <a href="رابط_رسالة_التليجرام_هنا" class="get-btn">GET</a>
+        </div>
+
+        <div class="app-card">
+            <div class="app-icon">
+                <i class="fa-solid fa-gamepad"></i>
+            </div>
+            <div class="app-info">
+                <div class="app-title">ببجي واجهة اللوبي</div>
+                <div class="app-version">v3.1 | 1.2 GB</div>
+                <div class="app-status"><i class="fa-solid fa-circle-check"></i> تعمل بدون جيلبريك</div>
+            </div>
+            <a href="رابط_رسالة_التليجرام_هنا" class="get-btn">GET</a>
+        </div>
+
+        <div class="app-card">
+            <div class="app-icon">
+                <i class="fa-brands fa-youtube"></i>
+            </div>
+            <div class="app-info">
+                <div class="app-title">YouTube Plus</div>
+                <div class="app-version">v19.04 | 120 MB</div>
+                <div class="app-status"><i class="fa-solid fa-circle-check"></i> بدون إعلانات</div>
+            </div>
+            <a href="رابط_رسالة_التليجرام_هنا" class="get-btn">GET</a>
+        </div>
+
     </div>
 
-    <script>
-        // بيانات الأكل
-        const foodData = [
-            { id: 1, name: "برجر كلاسيك", price: 7500, category: "برجر", img: "https://images.unsplash.com/photo-1568901346375-23c9450c58cd?q=80&w=500" },
-            { id: 2, name: "بيتزا مارغريتا", price: 12000, category: "بيتزا", img: "https://images.unsplash.com/photo-1604068549290-dea0e4a305ca?q=80&w=500" },
-            { id: 3, name: "باستا ألفريدو", price: 9000, category: "باستا", img: "https://images.unsplash.com/photo-1645112481338-31627878844a?q=80&w=500" },
-            { id: 4, name: "ترافل برجر", price: 10500, category: "برجر", img: "https://images.unsplash.com/photo-1550547660-d9450f859349?q=80&w=500" },
-            { id: 5, name: "موهيتو فراولة", price: 4000, category: "مشروبات", img: "https://images.unsplash.com/photo-1513558161293-cdaf765ed2fd?q=80&w=500" },
-            { id: 6, name: "بيتزا باربيكيو", price: 14000, category: "بيتزا", img: "https://images.unsplash.com/photo-1513104890138-7c749659a591?q=80&w=500" }
-        ];
+    <footer>
+        <p>جميع الحقوق محفوظة لـ Hassany IPA &copy; 2026</p>
+        <p style="margin-top: 5px; font-size: 0.8rem;">تطوير: @OM_G9</p>
+    </footer>
 
-        let cart = [];
-
-        // عرض الأكل في الصفحة
-        function renderMenu() {
-            const container = document.getElementById('menu-container');
-            container.innerHTML = foodData.map(item => `
-                <div class="menu-item">
-                    <img src="${item.img}" alt="${item.name}">
-                    <h3>${item.name}</h3>
-                    <p>أجود أنواع اللحوم والمكونات الطازجة المحضرة بكل حب.</p>
-                    <div class="price-row">
-                        <span class="price">${item.price.toLocaleString()} د.ع</span>
-                        <button class="add-btn" onclick="addToCart(${item.id})">إضافة للسلة</button>
-                    </div>
-                </div>
-            `).join('');
-        }
-
-        // إضافة للسلة
-        function addToCart(id) {
-            const item = foodData.find(i => i.id === id);
-            const inCart = cart.find(i => i.id === id);
-            if (inCart) {
-                inCart.qty++;
-            } else {
-                cart.push({ ...item, qty: 1 });
-            }
-            updateCartUI();
-        }
-
-        // تحديث واجهة السلة
-        function updateCartUI() {
-            document.getElementById('cart-count').innerText = cart.reduce((sum, item) => sum + item.qty, 0);
-            
-            const list = document.getElementById('cart-items-list');
-            list.innerHTML = cart.map(item => `
-                <div class="cart-item">
-                    <div>
-                        <strong>${item.name}</strong><br>
-                        <small>${item.qty} × ${item.price.toLocaleString()}</small>
-                    </div>
-                    <div>
-                        <button onclick="changeQty(${item.id}, -1)" style="background:#444; border:none; color:white; padding:5px 10px; border-radius:5px;">-</button>
-                        <span style="margin:0 10px">${item.qty}</span>
-                        <button onclick="changeQty(${item.id}, 1)" style="background:#444; border:none; color:white; padding:5px 10px; border-radius:5px;">+</button>
-                    </div>
-                </div>
-            `).join('');
-
-            const total = cart.reduce((sum, item) => sum + (item.price * item.qty), 0);
-            document.getElementById('total-price').innerText = total.toLocaleString() + " د.ع";
-        }
-
-        function changeQty(id, delta) {
-            const item = cart.find(i => i.id === id);
-            item.qty += delta;
-            if (item.qty <= 0) {
-                cart = cart.filter(i => i.id !== id);
-            }
-            updateCartUI();
-        }
-
-        function toggleCart() {
-            const modal = document.getElementById('cart-modal');
-            modal.style.display = modal.style.display === 'flex' ? 'none' : 'flex';
-        }
-
-        function sendToWhatsApp() {
-            if (cart.length === 0) return alert("السلة فارغة!");
-            
-            let message = "طلبية جديدة من مطعم تجريب:\n\n";
-            cart.forEach(item => {
-                message += `- ${item.name} (عدد: ${item.qty})\n`;
-            });
-            message += `\nالمجموع: ${document.getElementById('total-price').innerText}`;
-            message += `\nالملاحظات: ${document.getElementById('order-notes').value}`;
-            
-            const encoded = encodeURIComponent(message);
-            window.open(`https://wa.me/9647700000000?text=${encoded}`); // استبدل بالرقم الحقيقي
-        }
-
-        renderMenu();
-    </script>
 </body>
 </html>

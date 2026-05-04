@@ -32,7 +32,6 @@
             min-height: 100vh;
         }
 
-        /* شريط التنقل العلوي */
         header {
             padding: 20px 5%;
             display: flex;
@@ -56,9 +55,7 @@
             gap: 10px;
         }
 
-        .logo i {
-            color: var(--primary-color);
-        }
+        .logo i { color: var(--primary-color); }
 
         .telegram-btn {
             background: rgba(0, 136, 204, 0.1);
@@ -71,32 +68,10 @@
             transition: 0.3s;
         }
 
-        .telegram-btn:hover {
-            background: #0088cc;
-            color: #fff;
-        }
+        .hero { text-align: center; padding: 60px 20px; }
+        .hero h1 { font-size: 2.5rem; margin-bottom: 15px; }
+        .hero p { color: var(--text-muted); font-size: 1.1rem; margin-bottom: 30px; }
 
-        /* القسم الترحيبي */
-        .hero {
-            text-align: center;
-            padding: 60px 20px;
-        }
-
-        .hero h1 {
-            font-size: 2.5rem;
-            margin-bottom: 15px;
-            background: linear-gradient(90deg, #fff, #8e8e93);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-        }
-
-        .hero p {
-            color: var(--text-muted);
-            font-size: 1.1rem;
-            margin-bottom: 30px;
-        }
-
-        /* شبكة التطبيقات */
         .apps-container {
             display: grid;
             grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
@@ -106,7 +81,6 @@
             margin: 0 auto;
         }
 
-        /* تصميم كرت التطبيق (تأثير الزجاج) */
         .app-card {
             background: var(--card-bg);
             border: 1px solid var(--border-color);
@@ -117,14 +91,10 @@
             gap: 15px;
             backdrop-filter: blur(10px);
             -webkit-backdrop-filter: blur(10px);
-            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            transition: 0.3s;
         }
 
-        .app-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.5);
-            border-color: rgba(0, 122, 255, 0.3);
-        }
+        .app-card:hover { border-color: rgba(0, 122, 255, 0.3); }
 
         .app-icon {
             width: 70px;
@@ -137,77 +107,51 @@
             font-size: 30px;
             color: var(--primary-color);
             box-shadow: 0 4px 10px rgba(0,0,0,0.3);
-            flex-shrink: 0;
-            overflow: hidden;
         }
 
-        .app-icon img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-        }
+        .app-info { flex-grow: 1; }
+        .app-title { font-size: 1.1rem; font-weight: 700; margin-bottom: 5px; }
+        .app-version { font-size: 0.85rem; color: var(--text-muted); margin-bottom: 8px; }
+        .app-status { font-size: 0.75rem; color: #32d74b; display: flex; align-items: center; gap: 4px; }
 
-        .app-info {
-            flex-grow: 1;
-        }
-
-        .app-title {
-            font-size: 1.1rem;
-            font-weight: 700;
-            margin-bottom: 5px;
-        }
-
-        .app-version {
-            font-size: 0.85rem;
-            color: var(--text-muted);
-            margin-bottom: 8px;
-        }
-
-        .app-status {
-            font-size: 0.75rem;
-            color: #32d74b; /* لون أخضر للشهادة الشغالة */
-            display: flex;
-            align-items: center;
-            gap: 4px;
-        }
-
-        .app-status i {
-            font-size: 10px;
-        }
-
-        /* زر التحميل (GET) */
+        /* تعديلات زر التحميل */
         .get-btn {
             background: rgba(255, 255, 255, 0.1);
             color: var(--primary-color);
             padding: 8px 24px;
             border-radius: 20px;
-            text-decoration: none;
             font-weight: 700;
             font-size: 0.9rem;
             border: none;
             cursor: pointer;
-            transition: 0.3s;
+            transition: all 0.3s ease;
+            min-width: 80px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 5px;
         }
 
-        .get-btn:hover {
+        .get-btn:hover:not(.loading):not(.success) {
             background: var(--primary-color);
             color: #fff;
         }
 
-        /* الفوتر */
-        footer {
-            text-align: center;
-            padding: 30px;
-            color: var(--text-muted);
-            border-top: 1px solid var(--border-color);
-            font-size: 0.9rem;
+        /* حالة التحميل */
+        .get-btn.loading {
+            background: transparent;
+            border: 2px solid var(--primary-color);
+            color: var(--primary-color);
+            cursor: default;
         }
 
-        /* للكمبيوترات والهواتف */
-        @media (max-width: 600px) {
-            .hero h1 { font-size: 2rem; }
-            .apps-container { grid-template-columns: 1fr; }
+        /* حالة النجاح (اللون الأخضر) */
+        .get-btn.success {
+            background: #32d74b;
+            color: #000;
         }
+
+        footer { text-align: center; padding: 30px; color: var(--text-muted); border-top: 1px solid var(--border-color); font-size: 0.9rem; }
     </style>
 </head>
 <body>
@@ -220,58 +164,40 @@
     </header>
 
     <div class="hero">
-        <h1>أقوى متجر تطبيقات وملفات IPA</h1>
-        <p>حمّل أحدث التطبيقات المعدلة والألعاب بأعلى سرعة وبدون إعلانات مزعجة.</p>
+        <h1>متجر Hassany IPA الرسمي</h1>
+        <p>التطبيقات والألعاب بصيغة IPA جاهزة للتحميل المباشر.</p>
     </div>
 
     <div class="apps-container">
         
         <div class="app-card">
-            <div class="app-icon">
-                <i class="fa-solid fa-microphone-lines"></i>
-            </div>
+            <div class="app-icon"><i class="fa-solid fa-microphone-lines"></i></div>
             <div class="app-info">
                 <div class="app-title">تطبيق المايك المحسن</div>
                 <div class="app-version">v2.1 | 45 MB</div>
                 <div class="app-status"><i class="fa-solid fa-circle-check"></i> تعمل بدون جيلبريك</div>
             </div>
-            <a href="رابط_رسالة_التليجرام_هنا" class="get-btn">GET</a>
+            <button class="get-btn" onclick="startDownload(this, 'https://t.me/hassanyIPA/123')">GET</button>
         </div>
 
         <div class="app-card">
-            <div class="app-icon">
-                <i class="fa-solid fa-ghost"></i>
-            </div>
+            <div class="app-icon"><i class="fa-solid fa-cube"></i></div>
             <div class="app-info">
-                <div class="app-title">لعبة البيت المهجور</div>
-                <div class="app-version">v1.0.5 | 210 MB</div>
+                <div class="app-title">ماين كرافت (مودات)</div>
+                <div class="app-version">v1.20 | 850 MB</div>
                 <div class="app-status"><i class="fa-solid fa-circle-check"></i> شهادة مستقرة</div>
             </div>
-            <a href="رابط_رسالة_التليجرام_هنا" class="get-btn">GET</a>
+            <button class="get-btn" onclick="startDownload(this, 'https://t.me/hassanyIPA/124')">GET</button>
         </div>
 
         <div class="app-card">
-            <div class="app-icon">
-                <i class="fa-solid fa-gamepad"></i>
-            </div>
+            <div class="app-icon"><i class="fa-solid fa-crosshairs"></i></div>
             <div class="app-info">
                 <div class="app-title">ببجي واجهة اللوبي</div>
                 <div class="app-version">v3.1 | 1.2 GB</div>
-                <div class="app-status"><i class="fa-solid fa-circle-check"></i> تعمل بدون جيلبريك</div>
+                <div class="app-status"><i class="fa-solid fa-circle-check"></i> أمن للحساب الأساسي</div>
             </div>
-            <a href="رابط_رسالة_التليجرام_هنا" class="get-btn">GET</a>
-        </div>
-
-        <div class="app-card">
-            <div class="app-icon">
-                <i class="fa-brands fa-youtube"></i>
-            </div>
-            <div class="app-info">
-                <div class="app-title">YouTube Plus</div>
-                <div class="app-version">v19.04 | 120 MB</div>
-                <div class="app-status"><i class="fa-solid fa-circle-check"></i> بدون إعلانات</div>
-            </div>
-            <a href="رابط_رسالة_التليجرام_هنا" class="get-btn">GET</a>
+            <button class="get-btn" onclick="startDownload(this, 'https://t.me/hassanyIPA/125')">GET</button>
         </div>
 
     </div>
@@ -281,5 +207,36 @@
         <p style="margin-top: 5px; font-size: 0.8rem;">تطوير: @OM_G9</p>
     </footer>
 
+    <script>
+        function startDownload(button, telegramLink) {
+            // منع الضغط مرتين
+            if(button.classList.contains('loading') || button.classList.contains('success')) return;
+
+            // 1. تحويل الزر إلى وضع التحميل
+            button.classList.add('loading');
+            button.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i>';
+
+            // 2. انتظار 3 ثواني (وقت التحميل الوهمي)
+            setTimeout(() => {
+                // 3. تحويل الزر إلى علامة صح خضراء
+                button.classList.remove('loading');
+                button.classList.add('success');
+                button.innerHTML = '<i class="fa-solid fa-check"></i> تم';
+
+                // 4. فتح رابط الملف بقناتك بعد نصف ثانية من ظهور الصح
+                setTimeout(() => {
+                    window.open(telegramLink, '_blank');
+                    
+                    // إرجاع الزر لشكله الطبيعي بعد ما يروح للقناة
+                    setTimeout(() => {
+                        button.classList.remove('success');
+                        button.innerHTML = 'GET';
+                    }, 2000);
+
+                }, 600);
+
+            }, 3000); // 3000 ملي ثانية = 3 ثواني (تقدر تزيدها أو تقللها)
+        }
+    </script>
 </body>
 </html>

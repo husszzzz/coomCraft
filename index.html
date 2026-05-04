@@ -3,240 +3,176 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Hassany IPA | متجر تطبيقات</title>
+    <title>Hassany IPA Store</title>
     <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
     <style>
         :root {
-            --bg-color: #050505;
-            --card-bg: rgba(25, 25, 25, 0.8);
-            --primary-color: #007aff;
-            --text-main: #ffffff;
-            --text-muted: #8e8e93;
-            --border-color: rgba(255, 255, 255, 0.1);
-        }
-
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            font-family: 'Tajawal', sans-serif;
-            -webkit-tap-highlight-color: transparent;
+            --bg: #000000;
+            --accent: #007aff;
+            --card: #1c1c1e;
+            --text: #ffffff;
         }
 
         body {
-            background-color: var(--bg-color);
-            color: var(--text-main);
-            background-image: radial-gradient(circle at 50% 0%, rgba(0, 122, 255, 0.15) 0%, transparent 50%);
-            min-height: 100vh;
+            background: var(--bg);
+            color: var(--text);
+            font-family: 'Tajawal', sans-serif;
+            text-align: center;
+            padding-bottom: 50px;
         }
 
         header {
-            padding: 20px 5%;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            backdrop-filter: blur(20px);
-            -webkit-backdrop-filter: blur(20px);
-            border-bottom: 1px solid var(--border-color);
-            position: sticky;
-            top: 0;
-            z-index: 100;
+            padding: 40px 20px;
+            background: linear-gradient(to bottom, #1d1d1f, #000);
         }
 
-        .logo {
-            font-size: 24px;
-            font-weight: 800;
-            color: var(--text-main);
-            text-decoration: none;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-
-        .logo i { color: var(--primary-color); }
-
-        .telegram-btn {
-            background: rgba(0, 136, 204, 0.1);
-            color: #0088cc;
-            padding: 8px 20px;
+        .logo-img {
+            width: 80px;
+            height: 80px;
             border-radius: 20px;
-            text-decoration: none;
-            font-weight: 700;
-            border: 1px solid rgba(0, 136, 204, 0.3);
-            transition: 0.3s;
+            margin-bottom: 15px;
+            box-shadow: 0 0 20px rgba(0, 122, 255, 0.4);
         }
 
-        .hero { text-align: center; padding: 60px 20px; }
-        .hero h1 { font-size: 2.5rem; margin-bottom: 15px; }
-        .hero p { color: var(--text-muted); font-size: 1.1rem; margin-bottom: 30px; }
-
-        .apps-container {
+        .container {
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-            gap: 20px;
-            padding: 0 5% 60px;
-            max-width: 1200px;
-            margin: 0 auto;
+            grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+            gap: 15px;
+            padding: 20px;
+            max-width: 1100px;
+            margin: auto;
         }
 
         .app-card {
-            background: var(--card-bg);
-            border: 1px solid var(--border-color);
-            border-radius: 20px;
-            padding: 20px;
+            background: var(--card);
+            border-radius: 22px;
+            padding: 15px;
             display: flex;
             align-items: center;
             gap: 15px;
-            backdrop-filter: blur(10px);
-            -webkit-backdrop-filter: blur(10px);
+            transition: 0.3s;
+            border: 1px solid #2c2c2e;
+        }
+
+        .app-card:hover { transform: scale(1.02); background: #2c2c2e; }
+
+        .icon-box {
+            width: 65px;
+            height: 65px;
+            background: #2c2c2e;
+            border-radius: 15px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 28px;
+            color: var(--accent);
+        }
+
+        .info { flex-grow: 1; text-align: right; }
+        .name { font-size: 17px; font-weight: 700; }
+        .meta { font-size: 12px; color: #8e8e93; margin-top: 4px; }
+
+        .btn-get {
+            background: #2c2c2e;
+            color: var(--accent);
+            border: none;
+            padding: 8px 20px;
+            border-radius: 20px;
+            font-weight: 800;
+            cursor: pointer;
+            min-width: 75px;
             transition: 0.3s;
         }
 
-        .app-card:hover { border-color: rgba(0, 122, 255, 0.3); }
-
-        .app-icon {
-            width: 70px;
-            height: 70px;
-            border-radius: 18px;
-            background: linear-gradient(135deg, #1e1e1e, #2d2d2d);
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            font-size: 30px;
-            color: var(--primary-color);
-            box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+        .loading { color: transparent !important; position: relative; }
+        .loading::after {
+            content: "";
+            position: absolute;
+            width: 16px;
+            height: 16px;
+            top: 50%;
+            left: 50%;
+            margin: -8px;
+            border: 2px solid var(--accent);
+            border-top-color: transparent;
+            border-radius: 50%;
+            animation: spin 0.6s linear infinite;
         }
 
-        .app-info { flex-grow: 1; }
-        .app-title { font-size: 1.1rem; font-weight: 700; margin-bottom: 5px; }
-        .app-version { font-size: 0.85rem; color: var(--text-muted); margin-bottom: 8px; }
-        .app-status { font-size: 0.75rem; color: #32d74b; display: flex; align-items: center; gap: 4px; }
+        @keyframes spin { to { transform: rotate(360deg); } }
 
-        /* تعديلات زر التحميل */
-        .get-btn {
-            background: rgba(255, 255, 255, 0.1);
-            color: var(--primary-color);
-            padding: 8px 24px;
-            border-radius: 20px;
-            font-weight: 700;
-            font-size: 0.9rem;
-            border: none;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            min-width: 80px;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            gap: 5px;
-        }
-
-        .get-btn:hover:not(.loading):not(.success) {
-            background: var(--primary-color);
-            color: #fff;
-        }
-
-        /* حالة التحميل */
-        .get-btn.loading {
-            background: transparent;
-            border: 2px solid var(--primary-color);
-            color: var(--primary-color);
-            cursor: default;
-        }
-
-        /* حالة النجاح (اللون الأخضر) */
-        .get-btn.success {
-            background: #32d74b;
-            color: #000;
-        }
-
-        footer { text-align: center; padding: 30px; color: var(--text-muted); border-top: 1px solid var(--border-color); font-size: 0.9rem; }
+        .success-btn { background: #32d74b !important; color: #000 !important; }
     </style>
 </head>
 <body>
 
-    <header>
-        <a href="#" class="logo"><i class="fa-brands fa-apple"></i> Hassany IPA</a>
-        <a href="https://t.me/hassanyIPA" target="_blank" class="telegram-btn">
-            <i class="fa-brands fa-telegram"></i> قناتنا
-        </a>
-    </header>
+<header>
+    <img src="Hassany_Icon.png" alt="Logo" class="logo-img">
+    <h1>Hassany IPA</h1>
+    <p>حصريات التعديل والملفات النادرة</p>
+</header>
 
-    <div class="hero">
-        <h1>متجر Hassany IPA الرسمي</h1>
-        <p>التطبيقات والألعاب بصيغة IPA جاهزة للتحميل المباشر.</p>
+<div class="container">
+    
+    <div class="app-card">
+        <div class="icon-box"><i class="fas fa-microphone-alt"></i></div>
+        <div class="info">
+            <div class="name">تطبيق المايك (Hassany)</div>
+            <div class="meta">تضخيم 100% | v2.0</div>
+        </div>
+        <button class="btn-get" onclick="download(this, 'رابط_ملف_المايك_هنا')">GET</button>
     </div>
 
-    <div class="apps-container">
+    <div class="app-card">
+        <div class="icon-box"><i class="fas fa-ghost"></i></div>
+        <div class="info">
+            <div class="name">لعبة الرعب 3D</div>
+            <div class="meta">Hassany Game | v1.0</div>
+        </div>
+        <button class="btn-get" onclick="download(this, 'رابط_ملف_اللعبة_هنا')">GET</button>
+    </div>
+
+    <div class="app-card">
+        <div class="icon-box"><i class="fas fa-shield-alt"></i></div>
+        <div class="info">
+            <div class="name">ملف كشف أماكن</div>
+            <div class="meta">أمن 100% | تحديث جديد</div>
+        </div>
+        <button class="btn-get" onclick="download(this, 'رابط_ملف_كشف_الاماكن_هنا')">GET</button>
+    </div>
+
+</div>
+
+<footer>
+    <p>المطور حسين الحسني @OM_G9</p>
+</footer>
+
+<script>
+function download(btn, link) {
+    if(btn.classList.contains('loading')) return;
+    
+    btn.classList.add('loading');
+    
+    // محاكاة التحميل (3 ثواني)
+    setTimeout(() => {
+        btn.classList.remove('loading');
+        btn.classList.add('success-btn');
+        btn.innerHTML = '<i class="fas fa-check"></i>';
         
-        <div class="app-card">
-            <div class="app-icon"><i class="fa-solid fa-microphone-lines"></i></div>
-            <div class="app-info">
-                <div class="app-title">تطبيق المايك المحسن</div>
-                <div class="app-version">v2.1 | 45 MB</div>
-                <div class="app-status"><i class="fa-solid fa-circle-check"></i> تعمل بدون جيلبريك</div>
-            </div>
-            <button class="get-btn" onclick="startDownload(this, 'https://t.me/hassanyIPA/123')">GET</button>
-        </div>
-
-        <div class="app-card">
-            <div class="app-icon"><i class="fa-solid fa-cube"></i></div>
-            <div class="app-info">
-                <div class="app-title">ماين كرافت (مودات)</div>
-                <div class="app-version">v1.20 | 850 MB</div>
-                <div class="app-status"><i class="fa-solid fa-circle-check"></i> شهادة مستقرة</div>
-            </div>
-            <button class="get-btn" onclick="startDownload(this, 'https://t.me/hassanyIPA/124')">GET</button>
-        </div>
-
-        <div class="app-card">
-            <div class="app-icon"><i class="fa-solid fa-crosshairs"></i></div>
-            <div class="app-info">
-                <div class="app-title">ببجي واجهة اللوبي</div>
-                <div class="app-version">v3.1 | 1.2 GB</div>
-                <div class="app-status"><i class="fa-solid fa-circle-check"></i> أمن للحساب الأساسي</div>
-            </div>
-            <button class="get-btn" onclick="startDownload(this, 'https://t.me/hassanyIPA/125')">GET</button>
-        </div>
-
-    </div>
-
-    <footer>
-        <p>جميع الحقوق محفوظة لـ Hassany IPA &copy; 2026</p>
-        <p style="margin-top: 5px; font-size: 0.8rem;">تطوير: @OM_G9</p>
-    </footer>
-
-    <script>
-        function startDownload(button, telegramLink) {
-            // منع الضغط مرتين
-            if(button.classList.contains('loading') || button.classList.contains('success')) return;
-
-            // 1. تحويل الزر إلى وضع التحميل
-            button.classList.add('loading');
-            button.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i>';
-
-            // 2. انتظار 3 ثواني (وقت التحميل الوهمي)
+        // فتح الرابط بعد ظهور علامة الصح
+        setTimeout(() => {
+            window.location.href = link;
+            // إرجاع الزر لوضعه الطبيعي بعد فترة
             setTimeout(() => {
-                // 3. تحويل الزر إلى علامة صح خضراء
-                button.classList.remove('loading');
-                button.classList.add('success');
-                button.innerHTML = '<i class="fa-solid fa-check"></i> تم';
+                btn.classList.remove('success-btn');
+                btn.innerText = 'GET';
+            }, 3000);
+        }, 500);
+    }, 3000);
+}
+</script>
 
-                // 4. فتح رابط الملف بقناتك بعد نصف ثانية من ظهور الصح
-                setTimeout(() => {
-                    window.open(telegramLink, '_blank');
-                    
-                    // إرجاع الزر لشكله الطبيعي بعد ما يروح للقناة
-                    setTimeout(() => {
-                        button.classList.remove('success');
-                        button.innerHTML = 'GET';
-                    }, 2000);
-
-                }, 600);
-
-            }, 3000); // 3000 ملي ثانية = 3 ثواني (تقدر تزيدها أو تقللها)
-        }
-    </script>
 </body>
 </html>

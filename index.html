@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>مشغل أكواد HTML | الحسني</title>
+    <title>أداة الحسني لصنع المواقع | HTML & Dylib</title>
     <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
@@ -12,221 +12,157 @@
             --bg-color: #0a0a0c;
             --primary: #007aff;
             --text: #ffffff;
-            --container-bg: #1c1c1e;
+            --card-bg: #1c1c1e;
         }
 
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            font-family: 'Tajawal', sans-serif;
-        }
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Tajawal', sans-serif; }
+        body { background-color: var(--bg-color); color: var(--text); display: flex; flex-direction: column; align-items: center; min-height: 100vh; padding: 20px; }
 
-        body {
-            background-color: var(--bg-color);
-            color: var(--text);
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            min-height: 100vh;
-            padding: 20px;
-        }
+        .header { margin-top: 20px; text-align: center; margin-bottom: 30px; }
+        .header h1 { font-size: 2.5rem; color: var(--primary); text-shadow: 0 0 15px rgba(0, 122, 255, 0.3); }
 
-        /* تصميم الهيدر (العنوان) */
-        .header {
-            margin-top: 30px;
-            margin-bottom: 40px;
-            text-align: center;
-        }
+        /* خيارات التبديل (Tabs) */
+        .tabs { display: flex; gap: 10px; margin-bottom: 20px; background: #1c1c1e; padding: 5px; border-radius: 15px; border: 1px solid #3a3a3c; }
+        .tab-btn { padding: 10px 20px; border: none; background: transparent; color: #8e8e93; cursor: pointer; border-radius: 12px; font-weight: 700; transition: 0.3s; }
+        .tab-btn.active { background: var(--primary); color: #fff; }
 
-        .header h1 {
-            font-size: 2.5rem;
-            font-weight: 800;
-            color: var(--primary);
-            text-shadow: 0 0 15px rgba(0, 122, 255, 0.3);
-            margin-bottom: 10px;
-        }
-
-        .header p {
-            color: #8e8e93;
-            font-size: 1.1rem;
-        }
+        /* حاوية المدخلات */
+        .input-section { width: 100%; max-width: 600px; background: var(--card-bg); padding: 30px; border-radius: 20px; border: 1px solid #3a3a3c; text-align: center; }
+        .content-box { display: none; }
+        .content-box.active { display: block; }
 
         /* تصميم زر الرفع */
-        .upload-wrapper {
-            position: relative;
-            margin-bottom: 30px;
-        }
+        input[type="file"] { display: none; }
+        .upload-btn { background: #2c2c2e; color: var(--primary); padding: 15px 30px; border-radius: 15px; cursor: pointer; display: inline-flex; align-items: center; gap: 10px; border: 1px dashed var(--primary); width: 100%; justify-content: center; font-size: 1.1rem; }
 
-        /* إخفاء الانبوت الأصلي */
-        input[type="file"] {
-            display: none;
-        }
+        /* تصميم منطقة النص */
+        textarea { width: 100%; height: 150px; background: #000; color: #32d74b; border: 1px solid #3a3a3c; border-radius: 10px; padding: 15px; direction: ltr; font-family: monospace; resize: none; margin-bottom: 15px; }
+        .run-btn { background: var(--primary); color: #fff; border: none; padding: 12px 30px; border-radius: 10px; font-weight: 700; cursor: pointer; width: 100%; }
 
-        .upload-btn {
-            background: linear-gradient(135deg, #007aff, #005bb5);
-            color: #fff;
-            padding: 15px 40px;
-            border-radius: 30px;
-            font-size: 1.2rem;
-            font-weight: 700;
-            cursor: pointer;
-            display: inline-flex;
-            align-items: center;
-            gap: 10px;
-            box-shadow: 0 10px 20px rgba(0, 122, 255, 0.3);
-            transition: all 0.3s ease;
-        }
+        /* شاشة العرض */
+        .preview-section { width: 100%; max-width: 1000px; display: none; flex-direction: column; margin-top: 20px; animation: fadeIn 0.5s; }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
 
-        .upload-btn:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 15px 25px rgba(0, 122, 255, 0.5);
-        }
+        .preview-header { background: #2c2c2e; padding: 10px 20px; border-radius: 15px 15px 0 0; display: flex; justify-content: space-between; align-items: center; }
+        .viewer-container { width: 100%; height: 60vh; border-radius: 0 0 15px 15px; border: 1px solid #3a3a3c; background: #fff; overflow: hidden; }
+        iframe { width: 100%; height: 100%; border: none; }
 
-        /* تصميم شاشة العرض (iFrame) */
-        .preview-section {
-            width: 100%;
-            max-width: 1000px;
-            display: none; /* مخفية بالبداية */
-            flex-direction: column;
-            align-items: center;
-            animation: fadeIn 0.5s ease;
-        }
+        /* محلل Dylib */
+        .dylib-terminal { display: none; width: 100%; height: 60vh; background: #000; color: #32d74b; padding: 20px; font-family: monospace; text-align: left; direction: ltr; border-radius: 0 0 15px 15px; }
 
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(20px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-
-        .preview-header {
-            width: 100%;
-            background: #2c2c2e;
-            padding: 10px 20px;
-            border-radius: 15px 15px 0 0;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            border: 1px solid #3a3a3c;
-            border-bottom: none;
-        }
-
-        .preview-title {
-            font-size: 1rem;
-            color: #e5e5ea;
-        }
-
-        .close-btn {
-            background: #ff3b30;
-            color: white;
-            border: none;
-            padding: 5px 15px;
-            border-radius: 10px;
-            cursor: pointer;
-            font-weight: bold;
-        }
-
-        .iframe-container {
-            width: 100%;
-            height: 60vh;
-            background: #ffffff; /* خلفية بيضاء لملفات الـ HTML لضمان وضوحها */
-            border-radius: 0 0 15px 15px;
-            border: 1px solid #3a3a3c;
-            overflow: hidden;
-        }
-
-        iframe {
-            width: 100%;
-            height: 100%;
-            border: none;
-        }
-
-        /* حقوق المطور */
-        footer {
-            margin-top: auto;
-            padding: 20px;
-            color: #8e8e93;
-            font-size: 0.9rem;
-        }
-
-        footer span {
-            color: var(--primary);
-            font-weight: bold;
-        }
+        footer { margin-top: auto; padding: 20px; color: #8e8e93; }
+        footer span { color: var(--primary); font-weight: 800; }
     </style>
 </head>
 <body>
 
     <div class="header">
         <h1>أداة الحسني</h1>
-        <p>مشغل ملفات HTML المباشر</p>
+        <p>HTML & Dylib Specialist</p>
     </div>
 
-    <div class="upload-wrapper" id="uploadWrapper">
-        <input type="file" id="fileInput" accept=".html">
-        <label for="fileInput" class="upload-btn">
-            <i class="fa-solid fa-file-code"></i>
-            ارفع ملفك
-        </label>
+    <div class="tabs">
+        <button class="tab-btn active" onclick="switchTab('upload')">ارفع ملف</button>
+        <button class="tab-btn" onclick="switchTab('paste')">الصق كود HTML</button>
+    </div>
+
+    <div class="input-section" id="mainInput">
+        <div id="uploadBox" class="content-box active">
+            <input type="file" id="fileInput" accept=".html, .dylib">
+            <label for="fileInput" class="upload-btn">
+                <i class="fa-solid fa-file-arrow-up"></i> اختار ملف HTML أو Dylib
+            </label>
+        </div>
+
+        <div id="pasteBox" class="content-box">
+            <textarea id="htmlCode" placeholder=""></textarea>
+            <button class="run-btn" onclick="runPastedCode()">تشغيل الكود الآن</button>
+        </div>
     </div>
 
     <div class="preview-section" id="previewSection">
         <div class="preview-header">
-            <div class="preview-title" id="fileNameDisplay"><i class="fa-solid fa-window-maximize"></i> جاري العرض...</div>
-            <button class="close-btn" onclick="closePreview()">إغلاق الملف</button>
+            <span id="viewTitle">معاينة الملف</span>
+            <button onclick="closePreview()" style="background:#ff3b30; color:#fff; border:none; padding:5px 15px; border-radius:8px; cursor:pointer;">إغلاق</button>
         </div>
-        <div class="iframe-container">
+        <div class="viewer-container" id="iframeHost">
             <iframe id="htmlViewer"></iframe>
         </div>
+        <div class="dylib-terminal" id="dylibViewer"></div>
     </div>
 
-    <footer>
-        تم البرمجة والتطوير بواسطة <span>الحسني</span> &copy; 2026
-    </footer>
+    <footer>تم التطوير بواسطة <span>الحسني</span> &copy; 2026</footer>
 
     <script>
-        const fileInput = document.getElementById('fileInput');
-        const previewSection = document.getElementById('previewSection');
-        const htmlViewer = document.getElementById('htmlViewer');
-        const fileNameDisplay = document.getElementById('fileNameDisplay');
-        const uploadWrapper = document.getElementById('uploadWrapper');
-
-        // عند اختيار ملف
-        fileInput.addEventListener('change', function(event) {
-            const file = event.target.files[0];
+        // تبديل التبويبات
+        function switchTab(type) {
+            document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+            document.querySelectorAll('.content-box').forEach(box => box.classList.remove('active'));
             
-            if (file) {
-                // التأكد من أن الملف بصيغة HTML
-                if (file.name.endsWith('.html') || file.type === 'text/html') {
-                    
-                    // تحويل الملف إلى رابط مؤقت لعرضه
-                    const fileURL = URL.createObjectURL(file);
-                    
-                    // إرسال الرابط للـ iframe
-                    htmlViewer.src = fileURL;
-                    
-                    // عرض اسم الملف
-                    fileNameDisplay.innerHTML = `<i class="fa-solid fa-code"></i> ${file.name}`;
-                    
-                    // إخفاء زر الرفع وإظهار شاشة العرض
-                    uploadWrapper.style.display = 'none';
-                    previewSection.style.display = 'flex';
+            if(type === 'upload') {
+                document.querySelectorAll('.tab-btn')[0].classList.add('active');
+                document.getElementById('uploadBox').classList.add('active');
+            } else {
+                document.querySelectorAll('.tab-btn')[1].classList.add('active');
+                document.getElementById('pasteBox').classList.add('active');
+            }
+        }
 
-                } else {
-                    alert('عذراً! هذه الأداة تدعم ملفات HTML فقط.');
-                    // تفريغ الانبوت إذا كان الملف خاطئ
-                    fileInput.value = ''; 
-                }
+        // تشغيل الملف المرفوع
+        document.getElementById('fileInput').addEventListener('change', function(e) {
+            const file = e.target.files[0];
+            if (!file) return;
+
+            const name = file.name.toLowerCase();
+            if (name.endsWith('.html')) {
+                const url = URL.createObjectURL(file);
+                showHtml(url, file.name);
+            } else if (name.endsWith('.dylib')) {
+                showDylib(file);
             }
         });
 
-        // دالة لإغلاق العرض والرجوع للزر
+        // تشغيل الكود المنسوخ
+        function runPastedCode() {
+            const code = document.getElementById('htmlCode').value;
+            if(!code.trim()) return alert("الرجاء لصق الكود أولاً!");
+            
+            const blob = new Blob([code], {type: 'text/html'});
+            const url = URL.createObjectURL(blob);
+            showHtml(url, "كود ملصق");
+        }
+
+        function showHtml(url, title) {
+            document.getElementById('htmlViewer').src = url;
+            document.getElementById('iframeHost').style.display = 'block';
+            document.getElementById('dylibViewer').style.display = 'none';
+            document.getElementById('viewTitle').innerText = title;
+            openPreview();
+        }
+
+        function showDylib(file) {
+            document.getElementById('iframeHost').style.display = 'none';
+            const dv = document.getElementById('dylibViewer');
+            dv.style.display = 'block';
+            dv.innerHTML = `<p>> Analyzing: ${file.name}</p>
+                            <p>> Size: ${(file.size/1024).toFixed(2)} KB</p>
+                            <p style="color:#ff9f0a">> Status: Ready for Hassany IPA Injection ✔️</p>`;
+            document.getElementById('viewTitle').innerText = "Dylib Analyzer";
+            openPreview();
+        }
+
+        function openPreview() {
+            document.getElementById('mainInput').style.display = 'none';
+            document.querySelector('.tabs').style.display = 'none';
+            document.getElementById('previewSection').style.display = 'flex';
+        }
+
         function closePreview() {
-            htmlViewer.src = ''; // تفريغ الذاكرة
-            previewSection.style.display = 'none';
-            uploadWrapper.style.display = 'block';
-            fileInput.value = ''; // تصفير الملف لاختيار ملف جديد
+            document.getElementById('previewSection').style.display = 'none';
+            document.getElementById('mainInput').style.display = 'block';
+            document.querySelector('.tabs').style.display = 'flex';
+            document.getElementById('htmlViewer').src = '';
         }
     </script>
-
 </body>
 </html>

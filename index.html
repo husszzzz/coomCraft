@@ -3,176 +3,230 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Hassany IPA Store</title>
+    <title>مشغل أكواد HTML | الحسني</title>
     <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     
     <style>
         :root {
-            --bg: #000000;
-            --accent: #007aff;
-            --card: #1c1c1e;
+            --bg-color: #0a0a0c;
+            --primary: #007aff;
             --text: #ffffff;
+            --container-bg: #1c1c1e;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Tajawal', sans-serif;
         }
 
         body {
-            background: var(--bg);
+            background-color: var(--bg-color);
             color: var(--text);
-            font-family: 'Tajawal', sans-serif;
-            text-align: center;
-            padding-bottom: 50px;
-        }
-
-        header {
-            padding: 40px 20px;
-            background: linear-gradient(to bottom, #1d1d1f, #000);
-        }
-
-        .logo-img {
-            width: 80px;
-            height: 80px;
-            border-radius: 20px;
-            margin-bottom: 15px;
-            box-shadow: 0 0 20px rgba(0, 122, 255, 0.4);
-        }
-
-        .container {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
-            gap: 15px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            min-height: 100vh;
             padding: 20px;
-            max-width: 1100px;
-            margin: auto;
         }
 
-        .app-card {
-            background: var(--card);
-            border-radius: 22px;
-            padding: 15px;
-            display: flex;
-            align-items: center;
-            gap: 15px;
-            transition: 0.3s;
-            border: 1px solid #2c2c2e;
+        /* تصميم الهيدر (العنوان) */
+        .header {
+            margin-top: 30px;
+            margin-bottom: 40px;
+            text-align: center;
         }
 
-        .app-card:hover { transform: scale(1.02); background: #2c2c2e; }
-
-        .icon-box {
-            width: 65px;
-            height: 65px;
-            background: #2c2c2e;
-            border-radius: 15px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 28px;
-            color: var(--accent);
-        }
-
-        .info { flex-grow: 1; text-align: right; }
-        .name { font-size: 17px; font-weight: 700; }
-        .meta { font-size: 12px; color: #8e8e93; margin-top: 4px; }
-
-        .btn-get {
-            background: #2c2c2e;
-            color: var(--accent);
-            border: none;
-            padding: 8px 20px;
-            border-radius: 20px;
+        .header h1 {
+            font-size: 2.5rem;
             font-weight: 800;
+            color: var(--primary);
+            text-shadow: 0 0 15px rgba(0, 122, 255, 0.3);
+            margin-bottom: 10px;
+        }
+
+        .header p {
+            color: #8e8e93;
+            font-size: 1.1rem;
+        }
+
+        /* تصميم زر الرفع */
+        .upload-wrapper {
+            position: relative;
+            margin-bottom: 30px;
+        }
+
+        /* إخفاء الانبوت الأصلي */
+        input[type="file"] {
+            display: none;
+        }
+
+        .upload-btn {
+            background: linear-gradient(135deg, #007aff, #005bb5);
+            color: #fff;
+            padding: 15px 40px;
+            border-radius: 30px;
+            font-size: 1.2rem;
+            font-weight: 700;
             cursor: pointer;
-            min-width: 75px;
-            transition: 0.3s;
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            box-shadow: 0 10px 20px rgba(0, 122, 255, 0.3);
+            transition: all 0.3s ease;
         }
 
-        .loading { color: transparent !important; position: relative; }
-        .loading::after {
-            content: "";
-            position: absolute;
-            width: 16px;
-            height: 16px;
-            top: 50%;
-            left: 50%;
-            margin: -8px;
-            border: 2px solid var(--accent);
-            border-top-color: transparent;
-            border-radius: 50%;
-            animation: spin 0.6s linear infinite;
+        .upload-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 15px 25px rgba(0, 122, 255, 0.5);
         }
 
-        @keyframes spin { to { transform: rotate(360deg); } }
+        /* تصميم شاشة العرض (iFrame) */
+        .preview-section {
+            width: 100%;
+            max-width: 1000px;
+            display: none; /* مخفية بالبداية */
+            flex-direction: column;
+            align-items: center;
+            animation: fadeIn 0.5s ease;
+        }
 
-        .success-btn { background: #32d74b !important; color: #000 !important; }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .preview-header {
+            width: 100%;
+            background: #2c2c2e;
+            padding: 10px 20px;
+            border-radius: 15px 15px 0 0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border: 1px solid #3a3a3c;
+            border-bottom: none;
+        }
+
+        .preview-title {
+            font-size: 1rem;
+            color: #e5e5ea;
+        }
+
+        .close-btn {
+            background: #ff3b30;
+            color: white;
+            border: none;
+            padding: 5px 15px;
+            border-radius: 10px;
+            cursor: pointer;
+            font-weight: bold;
+        }
+
+        .iframe-container {
+            width: 100%;
+            height: 60vh;
+            background: #ffffff; /* خلفية بيضاء لملفات الـ HTML لضمان وضوحها */
+            border-radius: 0 0 15px 15px;
+            border: 1px solid #3a3a3c;
+            overflow: hidden;
+        }
+
+        iframe {
+            width: 100%;
+            height: 100%;
+            border: none;
+        }
+
+        /* حقوق المطور */
+        footer {
+            margin-top: auto;
+            padding: 20px;
+            color: #8e8e93;
+            font-size: 0.9rem;
+        }
+
+        footer span {
+            color: var(--primary);
+            font-weight: bold;
+        }
     </style>
 </head>
 <body>
 
-<header>
-    <img src="Hassany_Icon.png" alt="Logo" class="logo-img">
-    <h1>Hassany IPA</h1>
-    <p>حصريات التعديل والملفات النادرة</p>
-</header>
-
-<div class="container">
-    
-    <div class="app-card">
-        <div class="icon-box"><i class="fas fa-microphone-alt"></i></div>
-        <div class="info">
-            <div class="name">تطبيق المايك (Hassany)</div>
-            <div class="meta">تضخيم 100% | v2.0</div>
-        </div>
-        <button class="btn-get" onclick="download(this, 'رابط_ملف_المايك_هنا')">GET</button>
+    <div class="header">
+        <h1>أداة الحسني</h1>
+        <p>مشغل ملفات HTML المباشر</p>
     </div>
 
-    <div class="app-card">
-        <div class="icon-box"><i class="fas fa-ghost"></i></div>
-        <div class="info">
-            <div class="name">لعبة الرعب 3D</div>
-            <div class="meta">Hassany Game | v1.0</div>
-        </div>
-        <button class="btn-get" onclick="download(this, 'رابط_ملف_اللعبة_هنا')">GET</button>
+    <div class="upload-wrapper" id="uploadWrapper">
+        <input type="file" id="fileInput" accept=".html">
+        <label for="fileInput" class="upload-btn">
+            <i class="fa-solid fa-file-code"></i>
+            ارفع ملفك
+        </label>
     </div>
 
-    <div class="app-card">
-        <div class="icon-box"><i class="fas fa-shield-alt"></i></div>
-        <div class="info">
-            <div class="name">ملف كشف أماكن</div>
-            <div class="meta">أمن 100% | تحديث جديد</div>
+    <div class="preview-section" id="previewSection">
+        <div class="preview-header">
+            <div class="preview-title" id="fileNameDisplay"><i class="fa-solid fa-window-maximize"></i> جاري العرض...</div>
+            <button class="close-btn" onclick="closePreview()">إغلاق الملف</button>
         </div>
-        <button class="btn-get" onclick="download(this, 'رابط_ملف_كشف_الاماكن_هنا')">GET</button>
+        <div class="iframe-container">
+            <iframe id="htmlViewer"></iframe>
+        </div>
     </div>
 
-</div>
+    <footer>
+        تم البرمجة والتطوير بواسطة <span>الحسني</span> &copy; 2026
+    </footer>
 
-<footer>
-    <p>المطور حسين الحسني @OM_G9</p>
-</footer>
+    <script>
+        const fileInput = document.getElementById('fileInput');
+        const previewSection = document.getElementById('previewSection');
+        const htmlViewer = document.getElementById('htmlViewer');
+        const fileNameDisplay = document.getElementById('fileNameDisplay');
+        const uploadWrapper = document.getElementById('uploadWrapper');
 
-<script>
-function download(btn, link) {
-    if(btn.classList.contains('loading')) return;
-    
-    btn.classList.add('loading');
-    
-    // محاكاة التحميل (3 ثواني)
-    setTimeout(() => {
-        btn.classList.remove('loading');
-        btn.classList.add('success-btn');
-        btn.innerHTML = '<i class="fas fa-check"></i>';
-        
-        // فتح الرابط بعد ظهور علامة الصح
-        setTimeout(() => {
-            window.location.href = link;
-            // إرجاع الزر لوضعه الطبيعي بعد فترة
-            setTimeout(() => {
-                btn.classList.remove('success-btn');
-                btn.innerText = 'GET';
-            }, 3000);
-        }, 500);
-    }, 3000);
-}
-</script>
+        // عند اختيار ملف
+        fileInput.addEventListener('change', function(event) {
+            const file = event.target.files[0];
+            
+            if (file) {
+                // التأكد من أن الملف بصيغة HTML
+                if (file.name.endsWith('.html') || file.type === 'text/html') {
+                    
+                    // تحويل الملف إلى رابط مؤقت لعرضه
+                    const fileURL = URL.createObjectURL(file);
+                    
+                    // إرسال الرابط للـ iframe
+                    htmlViewer.src = fileURL;
+                    
+                    // عرض اسم الملف
+                    fileNameDisplay.innerHTML = `<i class="fa-solid fa-code"></i> ${file.name}`;
+                    
+                    // إخفاء زر الرفع وإظهار شاشة العرض
+                    uploadWrapper.style.display = 'none';
+                    previewSection.style.display = 'flex';
+
+                } else {
+                    alert('عذراً! هذه الأداة تدعم ملفات HTML فقط.');
+                    // تفريغ الانبوت إذا كان الملف خاطئ
+                    fileInput.value = ''; 
+                }
+            }
+        });
+
+        // دالة لإغلاق العرض والرجوع للزر
+        function closePreview() {
+            htmlViewer.src = ''; // تفريغ الذاكرة
+            previewSection.style.display = 'none';
+            uploadWrapper.style.display = 'block';
+            fileInput.value = ''; // تصفير الملف لاختيار ملف جديد
+        }
+    </script>
 
 </body>
 </html>

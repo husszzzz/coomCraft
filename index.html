@@ -7,227 +7,381 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;800&display=swap" rel="stylesheet">
     <style>
-        body {
-            font-family: 'Cairo', sans-serif;
-            background-color: #0b0b0f;
-        }
+        body { font-family: 'Cairo', sans-serif; background-color: #0b0b0f; }
+        /* تصميم سكرول بار خفيف لقائمة التطبيقات */
+        .custom-scrollbar::-webkit-scrollbar { width: 6px; }
+        .custom-scrollbar::-webkit-scrollbar-track { background: #18181b; border-radius: 10px; }
+        .custom-scrollbar::-webkit-scrollbar-thumb { background: #581c87; border-radius: 10px; }
     </style>
 </head>
 <body class="text-gray-200 min-h-screen pb-12">
 
+    <!-- شريط الرأس -->
     <header class="border-b border-zinc-800 bg-zinc-950/50 backdrop-blur sticky top-0 z-50">
-        <div class="max-w-4xl mx-auto px-4 py-4 flex justify-between items-center">
+        <div class="max-w-5xl mx-auto px-4 py-4 flex justify-between items-center">
             <div class="flex items-center gap-3">
                 <span class="text-2xl">👑</span>
                 <h1 class="text-xl font-extrabold text-white">لوحة تحكم <span class="text-purple-500">Hassany Store</span></h1>
             </div>
-            <span class="text-xs bg-purple-950 text-purple-400 border border-purple-800 px-3 py-1.2 rounded-full font-bold">V1.0.0</span>
+            <span class="text-xs bg-purple-950 text-purple-400 border border-purple-800 px-3 py-1 rounded-full font-bold">V2.0 PRO</span>
         </div>
     </header>
 
-    <main class="max-w-4xl mx-auto px-4 mt-8 grid grid-cols-1 gap-8">
+    <main class="max-w-5xl mx-auto px-4 mt-8 grid grid-cols-1 lg:grid-cols-3 gap-8">
         
-        <section class="bg-zinc-900/50 border border-zinc-800/80 rounded-3xl p-6">
-            <h2 class="text-lg font-bold text-white mb-4 flex items-center gap-2">
-                <span>⚙️</span> إعدادات الربط مع GitHub
-            </h2>
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div>
-                    <label class="block text-xs text-gray-400 mb-1">GitHub Token (الرمز السري)</label>
-                    <input type="password" id="githubToken" placeholder="ghp_xxxxxxxxxxxx" class="w-full bg-zinc-950 border border-zinc-800 rounded-xl px-4 py-2.5 text-sm text-white focus:outline-none focus:border-purple-500 transition">
+        <!-- العمود الأيمن: الإعدادات وإضافة/تعديل التطبيق -->
+        <div class="lg:col-span-2 space-y-8">
+            
+            <!-- ⚙️ إعدادات الربط -->
+            <section class="bg-zinc-900/50 border border-zinc-800/80 rounded-3xl p-6">
+                <div class="flex justify-between items-center mb-4">
+                    <h2 class="text-lg font-bold text-white flex items-center gap-2"><span>⚙️</span> إعدادات الربط</h2>
+                    <button onclick="loadAppsFromGitHub()" class="bg-zinc-800 hover:bg-zinc-700 text-xs px-3 py-1.5 rounded-lg transition text-white">تحديث الاتصال 🔄</button>
                 </div>
-                <div>
-                    <label class="block text-xs text-gray-400 mb-1">اسم المستخدم (GitHub Owner)</label>
-                    <input type="text" id="githubOwner" placeholder="اسم حسابك" class="w-full bg-zinc-950 border border-zinc-800 rounded-xl px-4 py-2.5 text-sm text-white focus:outline-none focus:border-purple-500 transition">
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <div>
+                        <input type="password" id="githubToken" placeholder="GitHub Token (ghp_...)" class="w-full bg-zinc-950 border border-zinc-800 rounded-xl px-4 py-2 text-sm text-white focus:border-purple-500 transition">
+                    </div>
+                    <div>
+                        <input type="text" id="githubOwner" placeholder="اسم المستخدم (Owner)" class="w-full bg-zinc-950 border border-zinc-800 rounded-xl px-4 py-2 text-sm text-white focus:border-purple-500 transition">
+                    </div>
+                    <div>
+                        <input type="text" id="githubRepo" placeholder="اسم المستودع (Repo)" class="w-full bg-zinc-950 border border-zinc-800 rounded-xl px-4 py-2 text-sm text-white focus:border-purple-500 transition">
+                    </div>
+                    <div>
+                        <input type="text" id="filePath" placeholder="مسار الملف (apps.json)" class="w-full bg-zinc-950 border border-zinc-800 rounded-xl px-4 py-2 text-sm text-white focus:border-purple-500 transition">
+                    </div>
                 </div>
-                <div>
-                    <label class="block text-xs text-gray-400 mb-1">اسم المستودع (Repository Name)</label>
-                    <input type="text" id="githubRepo" placeholder="Ksign" class="w-full bg-zinc-950 border border-zinc-800 rounded-xl px-4 py-2.5 text-sm text-white focus:outline-none focus:border-purple-500 transition">
-                </div>
-                <div>
-                    <label class="block text-xs text-gray-400 mb-1">مسار ملف الـ JSON (Path)</label>
-                    <input type="text" id="filePath" placeholder="apps.json" class="w-full bg-zinc-950 border border-zinc-800 rounded-xl px-4 py-2.5 text-sm text-white focus:outline-none focus:border-purple-500 transition">
-                </div>
-            </div>
-            <button onclick="saveSettings()" class="mt-4 bg-zinc-800 hover:bg-zinc-700 text-white text-xs font-bold px-4 py-2 rounded-lg transition">
-                حفظ الإعدادات محلياً 💾
-            </button>
-        </section>
+                <button onclick="saveSettings()" class="mt-4 bg-zinc-800 hover:bg-purple-900 text-white text-xs font-bold px-4 py-2 rounded-lg transition w-full sm:w-auto">
+                    حفظ الإعدادات 💾
+                </button>
+            </section>
 
-        <section class="bg-zinc-900/50 border border-zinc-800/80 rounded-3xl p-6">
-            <h2 class="text-lg font-bold text-white mb-6 flex items-center gap-2">
-                <span>🚀</span> إضافة تطبيق جديد للمتجر
-            </h2>
-            <form id="appForm" onsubmit="addApp(event)" class="space-y-5">
-                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <div>
-                        <label class="block text-xs text-gray-400 mb-1">اسم التطبيق *</label>
-                        <input type="text" id="appName" required placeholder="مثال: WhatsApp++" class="w-full bg-zinc-950 border border-zinc-800 rounded-xl px-4 py-2.5 text-sm text-white focus:outline-none focus:border-purple-500 transition">
+            <!-- 📝 استمارة التطبيق (إضافة / تعديل) -->
+            <section class="bg-zinc-900/50 border border-zinc-800/80 rounded-3xl p-6 relative overflow-hidden" id="formSection">
+                <div id="editBadge" class="hidden absolute top-0 left-0 bg-yellow-600 text-white text-xs font-bold px-4 py-1 rounded-br-2xl">وضع التعديل ✏️</div>
+                <h2 class="text-lg font-bold text-white mb-6 flex items-center gap-2" id="formTitle">
+                    <span>🚀</span> إضافة تطبيق جديد للمتجر
+                </h2>
+                
+                <form id="appForm" onsubmit="handleFormSubmit(event)" class="space-y-4">
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div>
+                            <label class="block text-xs text-gray-400 mb-1">اسم التطبيق *</label>
+                            <input type="text" id="appName" required class="w-full bg-zinc-950 border border-zinc-800 rounded-xl px-4 py-2.5 text-sm text-white focus:border-purple-500">
+                        </div>
+                        <div>
+                            <label class="block text-xs text-gray-400 mb-1">Bundle ID *</label>
+                            <input type="text" id="bundleId" required class="w-full bg-zinc-950 border border-zinc-800 rounded-xl px-4 py-2.5 text-sm text-white focus:border-purple-500">
+                        </div>
+                        <div>
+                            <label class="block text-xs text-gray-400 mb-1">الإصدار (Version) *</label>
+                            <input type="text" id="appVersion" required class="w-full bg-zinc-950 border border-zinc-800 rounded-xl px-4 py-2.5 text-sm text-white focus:border-purple-500">
+                        </div>
+                        <div>
+                            <label class="block text-xs text-gray-400 mb-1">المطور / المعدل</label>
+                            <input type="text" id="developer" class="w-full bg-zinc-950 border border-zinc-800 rounded-xl px-4 py-2.5 text-sm text-white focus:border-purple-500">
+                        </div>
+                        <div class="md:col-span-2">
+                            <label class="block text-xs text-gray-400 mb-1">رابط تحميل الـ IPA *</label>
+                            <input type="url" id="downloadUrl" required class="w-full bg-zinc-950 border border-zinc-800 rounded-xl px-4 py-2.5 text-sm text-white focus:border-purple-500">
+                        </div>
+                        <div>
+                            <label class="block text-xs text-gray-400 mb-1">رابط صورة الأيقونة *</label>
+                            <input type="url" id="iconUrl" required class="w-full bg-zinc-950 border border-zinc-800 rounded-xl px-4 py-2.5 text-sm text-white focus:border-purple-500">
+                        </div>
+                        <div class="flex gap-4">
+                            <div class="flex-1">
+                                <label class="block text-xs text-gray-400 mb-1">الحجم (MB) *</label>
+                                <input type="number" step="0.1" id="appSize" required class="w-full bg-zinc-950 border border-zinc-800 rounded-xl px-4 py-2.5 text-sm text-white focus:border-purple-500">
+                            </div>
+                            <div class="flex-1">
+                                <label class="block text-xs text-gray-400 mb-1">لون (Hex)</label>
+                                <input type="text" id="tintColor" placeholder="00FF00" class="w-full bg-zinc-950 border border-zinc-800 rounded-xl px-4 py-2.5 text-sm text-white focus:border-purple-500">
+                            </div>
+                        </div>
                     </div>
+
                     <div>
-                        <label class="block text-xs text-gray-400 mb-1">المعرف الفريد (Bundle ID) *</label>
-                        <input type="text" id="bundleId" required placeholder="مثال: com.whatsapp.plus" class="w-full bg-zinc-950 border border-zinc-800 rounded-xl px-4 py-2.5 text-sm text-white focus:outline-none focus:border-purple-500 transition">
+                        <label class="block text-xs text-gray-400 mb-1">وصف التحديث (ما الجديد؟)</label>
+                        <input type="text" id="versionDesc" class="w-full bg-zinc-950 border border-zinc-800 rounded-xl px-4 py-2.5 text-sm text-white focus:border-purple-500">
                     </div>
+
                     <div>
-                        <label class="block text-xs text-gray-400 mb-1">رقم الإصدار *</label>
-                        <input type="text" id="appVersion" required placeholder="مثال: 24.12.0" class="w-full bg-zinc-950 border border-zinc-800 rounded-xl px-4 py-2.5 text-sm text-white focus:outline-none focus:border-purple-500 transition">
+                        <label class="block text-xs text-gray-400 mb-1">الوصف الكامل *</label>
+                        <textarea id="appDesc" required rows="3" class="w-full bg-zinc-950 border border-zinc-800 rounded-xl px-4 py-2.5 text-sm text-white focus:border-purple-500"></textarea>
                     </div>
-                    <div>
-                        <label class="block text-xs text-gray-400 mb-1">اسم المطور / المعدل</label>
-                        <input type="text" id="developer" placeholder="Hassany" class="w-full bg-zinc-950 border border-zinc-800 rounded-xl px-4 py-2.5 text-sm text-white focus:outline-none focus:border-purple-500 transition">
+
+                    <div class="pt-2 flex flex-wrap items-center gap-3">
+                        <button type="submit" id="submitBtn" class="bg-purple-600 hover:bg-purple-700 text-white font-bold px-8 py-3 rounded-xl shadow-lg transition flex items-center gap-2">
+                            <span>🚀</span> إضافة للمتجر
+                        </button>
+                        <button type="button" id="cancelEditBtn" onclick="cancelEdit()" class="hidden bg-zinc-800 hover:bg-red-900 text-white font-bold px-6 py-3 rounded-xl transition">
+                            إلغاء التعديل ❌
+                        </button>
+                        <div id="statusMsg" class="text-sm font-semibold mt-2 sm:mt-0"></div>
                     </div>
-                    <div>
-                        <label class="block text-xs text-gray-400 mb-1">رابط صورة الأيقونة (Icon URL) *</label>
-                        <input type="url" id="iconUrl" required placeholder="https://..." class="w-full bg-zinc-950 border border-zinc-800 rounded-xl px-4 py-2.5 text-sm text-white focus:outline-none focus:border-purple-500 transition">
-                    </div>
-                    <div>
-                        <label class="block text-xs text-gray-400 mb-1">رابط تحميل الـ IPA المباشر *</label>
-                        <input type="url" id="downloadUrl" required placeholder="https://..." class="w-full bg-zinc-950 border border-zinc-800 rounded-xl px-4 py-2.5 text-sm text-white focus:outline-none focus:border-purple-500 transition">
-                    </div>
-                    <div>
-                        <label class="block text-xs text-gray-400 mb-1">حجم التطبيق (بالميجابايت MB) *</label>
-                        <input type="number" id="appSize" required placeholder="مثال: 54" class="w-full bg-zinc-950 border border-zinc-800 rounded-xl px-4 py-2.5 text-sm text-white focus:outline-none focus:border-purple-500 transition">
-                    </div>
-                    <div>
-                        <label class="block text-xs text-gray-400 mb-1">لون الهوية (Hex Color بدون #)</label>
-                        <input type="text" id="tintColor" placeholder="00FF00" class="w-full bg-zinc-950 border border-zinc-800 rounded-xl px-4 py-2.5 text-sm text-white focus:outline-none focus:border-purple-500 transition">
-                    </div>
+                </form>
+            </section>
+        </div>
+
+        <!-- العمود الأيسر: إدارة التطبيقات المضافة -->
+        <div class="lg:col-span-1">
+            <section class="bg-zinc-900/50 border border-zinc-800/80 rounded-3xl p-6 h-full flex flex-col">
+                <div class="flex justify-between items-center mb-4">
+                    <h2 class="text-lg font-bold text-white flex items-center gap-2"><span>📱</span> تطبيقات المتجر</h2>
+                    <span id="appCount" class="bg-purple-900/50 text-purple-400 text-xs px-2 py-1 rounded-lg">0 تطبيق</span>
+                </div>
+                
+                <div id="appsLoader" class="text-center text-sm text-gray-500 py-10">
+                    أدخل الإعدادات لجلب التطبيقات...
                 </div>
 
-                <div>
-                    <label class="block text-xs text-gray-400 mb-1">وصف التحديث الحالي (ما الجديد في هذا الإصدار؟)</label>
-                    <input type="text" id="versionDesc" placeholder="تفعيل ميزات البلس الحصرية..." class="w-full bg-zinc-950 border border-zinc-800 rounded-xl px-4 py-2.5 text-sm text-white focus:outline-none focus:border-purple-500 transition">
+                <!-- قائمة التطبيقات هنا -->
+                <div id="appsList" class="flex-1 overflow-y-auto pr-2 custom-scrollbar space-y-3 max-h-[700px]">
+                    <!-- يتم حقن التطبيقات هنا بواسطة JavaScript -->
                 </div>
-
-                <div>
-                    <label class="block text-xs text-gray-400 mb-1">الوصف الكامل للتطبيق *</label>
-                    <textarea id="appDesc" required rows="3" placeholder="اكتب ميزات التطبيق هنا بالتفصيل لتظهر للمستخدم بصفحة الوصف..." class="w-full bg-zinc-950 border border-zinc-800 rounded-xl px-4 py-2.5 text-sm text-white focus:outline-none focus:border-purple-500 transition"></textarea>
-                </div>
-
-                <div class="pt-4 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-                    <button type="submit" id="submitBtn" class="bg-purple-600 hover:bg-purple-700 text-white font-bold px-8 py-3 rounded-xl shadow-lg shadow-purple-900/20 transition flex items-center justify-center gap-2">
-                        <span>🚀</span> رفع التطبيق للمتجر الآن
-                    </button>
-                    <div id="statusMsg" class="text-sm font-semibold"></div>
-                </div>
-            </form>
-        </section>
+            </section>
+        </div>
     </main>
 
     <script>
-        // تحميل الإعدادات المحفوظة عند فتح الصفحة
+        // المتغيرات العالمية للتحكم
+        let currentStoreData = { apps: [] };
+        let currentFileSha = "";
+        let editIndex = -1; // -1 يعني إضافة جديدة، أي رقم ثاني يعني تعديل تطبيق موجود
+
+        // 1. تحميل الإعدادات وجلب التطبيقات عند فتح الصفحة
         window.onload = function() {
             document.getElementById('githubToken').value = localStorage.getItem('github_token') || '';
             document.getElementById('githubOwner').value = localStorage.getItem('github_owner') || '';
             document.getElementById('githubRepo').value = localStorage.getItem('github_repo') || '';
             document.getElementById('filePath').value = localStorage.getItem('file_path') || 'apps.json';
+            
+            if (localStorage.getItem('github_token') && localStorage.getItem('github_repo')) {
+                loadAppsFromGitHub();
+            }
         }
 
+        // 2. حفظ الإعدادات
         function saveSettings() {
             localStorage.setItem('github_token', document.getElementById('githubToken').value);
             localStorage.setItem('github_owner', document.getElementById('githubOwner').value);
             localStorage.setItem('github_repo', document.getElementById('githubRepo').value);
             localStorage.setItem('file_path', document.getElementById('filePath').value);
-            alert('تم حفظ الإعدادات بنجاح بداخل متصفحك الشخصي! 💾');
+            alert('تم الحفظ! 💾');
+            loadAppsFromGitHub();
         }
 
-        async function addApp(event) {
-            event.preventDefault();
+        // 3. جلب ملف الـ JSON من GitHub
+        async function loadAppsFromGitHub() {
+            const token = document.getElementById('githubToken').value;
+            const owner = document.getElementById('githubOwner').value;
+            const repo = document.getElementById('githubRepo').value;
+            const path = document.getElementById('filePath').value;
+            const loader = document.getElementById('appsLoader');
+            const list = document.getElementById('appsList');
+
+            if (!token || !repo) return;
+
+            loader.style.display = 'block';
+            loader.innerText = 'جاري جلب التطبيقات... ⏳';
+            list.innerHTML = '';
+
+            try {
+                const url = `https://api.github.com/repos/${owner}/${repo}/contents/${path}`;
+                const response = await fetch(url, { headers: { "Authorization": `token ${token}` } });
+                
+                if (!response.ok) throw new Error("فشل الوصول للملف");
+
+                const fileData = await response.json();
+                currentFileSha = fileData.sha;
+                
+                // فك التشفير
+                const decodedContent = decodeURIComponent(atob(fileData.content).split('').map(c => 
+                    '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2)
+                ).join(''));
+
+                currentStoreData = JSON.parse(decodedContent);
+                if (!currentStoreData.apps) currentStoreData.apps = [];
+
+                loader.style.display = 'none';
+                renderAppsList();
+
+            } catch (error) {
+                loader.innerText = `❌ خطأ: ${error.message}`;
+            }
+        }
+
+        // 4. رسم قائمة التطبيقات في الواجهة
+        function renderAppsList() {
+            const list = document.getElementById('appsList');
+            list.innerHTML = '';
+            document.getElementById('appCount').innerText = `${currentStoreData.apps.length} تطبيق`;
+
+            currentStoreData.apps.forEach((app, index) => {
+                const sizeMB = (app.size / (1024 * 1024)).toFixed(1);
+                
+                const card = document.createElement('div');
+                card.className = "bg-zinc-800/60 border border-zinc-700/50 p-3 rounded-2xl flex items-center gap-3 transition hover:bg-zinc-800";
+                card.innerHTML = `
+                    <img src="${app.iconURL}" onerror="this.src='https://via.placeholder.com/150/1f1f22/FFFFFF?text=?'" class="w-12 h-12 rounded-xl object-cover">
+                    <div class="flex-1 overflow-hidden">
+                        <h3 class="text-sm font-bold text-white truncate">${app.name}</h3>
+                        <p class="text-xs text-gray-400 truncate">v${app.version} • ${sizeMB} MB</p>
+                    </div>
+                    <div class="flex flex-col gap-1">
+                        <button onclick="startEdit(${index})" class="bg-blue-900/50 hover:bg-blue-600 text-blue-300 hover:text-white p-1.5 rounded-lg transition" title="تعديل">
+                            ✏️
+                        </button>
+                        <button onclick="confirmDelete(${index})" class="bg-red-900/50 hover:bg-red-600 text-red-300 hover:text-white p-1.5 rounded-lg transition" title="حذف">
+                            🗑️
+                        </button>
+                    </div>
+                `;
+                list.appendChild(card);
+            });
+        }
+
+        // 5. زر التعديل (نقل البيانات للاستمارة)
+        function startEdit(index) {
+            const app = currentStoreData.apps[index];
+            editIndex = index;
             
+            document.getElementById('appName').value = app.name;
+            document.getElementById('bundleId').value = app.bundleIdentifier;
+            document.getElementById('appVersion').value = app.version;
+            document.getElementById('developer').value = app.developerName || '';
+            document.getElementById('downloadUrl').value = app.downloadURL;
+            document.getElementById('iconUrl').value = app.iconURL;
+            document.getElementById('appSize').value = (app.size / (1024 * 1024)).toFixed(1);
+            document.getElementById('tintColor').value = app.tintColor || '';
+            document.getElementById('versionDesc').value = app.versionDescription || '';
+            document.getElementById('appDesc').value = app.localizedDescription || '';
+
+            // تغيير شكل الواجهة لوضع التعديل
+            document.getElementById('formTitle').innerHTML = '<span>✏️</span> تعديل تطبيق: ' + app.name;
+            document.getElementById('submitBtn').innerHTML = '<span>💾</span> حفظ التعديلات';
+            document.getElementById('submitBtn').classList.replace('bg-purple-600', 'bg-blue-600');
+            document.getElementById('editBadge').classList.remove('hidden');
+            document.getElementById('cancelEditBtn').classList.remove('hidden');
+            
+            // رفع الشاشة للاستمارة
+            document.getElementById('formSection').scrollIntoView({ behavior: 'smooth' });
+        }
+
+        // 6. إلغاء التعديل والرجوع لوضع الإضافة
+        function cancelEdit() {
+            editIndex = -1;
+            document.getElementById('appForm').reset();
+            
+            document.getElementById('formTitle').innerHTML = '<span>🚀</span> إضافة تطبيق جديد للمتجر';
+            document.getElementById('submitBtn').innerHTML = '<span>🚀</span> إضافة للمتجر';
+            document.getElementById('submitBtn').classList.replace('bg-blue-600', 'bg-purple-600');
+            document.getElementById('editBadge').classList.add('hidden');
+            document.getElementById('cancelEditBtn').classList.add('hidden');
+            document.getElementById('statusMsg').innerText = '';
+        }
+
+        // 7. زر الحذف
+        async function confirmDelete(index) {
+            const appName = currentStoreData.apps[index].name;
+            if (confirm(`هل أنت متأكد من حذف تطبيق "${appName}" من المتجر نهائياً؟`)) {
+                currentStoreData.apps.splice(index, 1); // مسح من القائمة
+                await pushToGitHub(`🗑️ حذف تطبيق: ${appName}`);
+            }
+        }
+
+        // 8. التعامل مع زر "إرسال" (للإضافة أو التعديل)
+        async function handleFormSubmit(event) {
+            event.preventDefault();
             const btn = document.getElementById('submitBtn');
             const status = document.getElementById('statusMsg');
             
-            const token = localStorage.getItem('github_token');
-            const owner = localStorage.getItem('github_owner');
-            const repo = localStorage.getItem('github_repo');
-            const path = localStorage.getItem('file_path');
-
-            if (!token || !owner || !repo || !path) {
+            if (!currentFileSha) {
                 status.className = "text-red-500 font-bold";
-                status.innerText = "❌ يرجى ملء وحفظ إعدادات GitHub أولاً!";
+                status.innerText = "❌ لم يتم جلب الملف من السيرفر. اضغط 'تحديث الاتصال'.";
                 return;
             }
 
             btn.disabled = true;
-            btn.innerText = "جاري الاتصال بـ GitHub... ⏳";
-            status.innerText = "";
+            status.innerText = "جاري الحفظ بالمتجر... ⏳";
+
+            // تجميع البيانات من الاستمارة
+            const sizeInBytes = Math.round(parseFloat(document.getElementById('appSize').value) * 1024 * 1024);
+            const appData = {
+                name: document.getElementById('appName').value,
+                bundleIdentifier: document.getElementById('bundleId').value,
+                developerName: document.getElementById('developer').value || "Hassany",
+                version: document.getElementById('appVersion').value,
+                versionDate: new Date().toISOString(), // مهم جداً للترتيب
+                versionDescription: document.getElementById('versionDesc').value || "إصدار جديد.",
+                downloadURL: document.getElementById('downloadUrl').value,
+                localizedDescription: document.getElementById('appDesc').value,
+                iconURL: document.getElementById('iconUrl').value,
+                size: sizeInBytes,
+                tintColor: document.getElementById('tintColor').value || "a855f7"
+            };
+
+            let commitMessage = "";
+
+            if (editIndex === -1) {
+                // وضع الإضافة: نضع التطبيق في بداية القائمة
+                currentStoreData.apps.unshift(appData);
+                commitMessage = `🚀 إضافة تطبيق جديد: ${appData.name}`;
+            } else {
+                // وضع التعديل: نستبدل التطبيق القديم بالجديد
+                currentStoreData.apps[editIndex] = appData;
+                commitMessage = `✏️ تحديث تطبيق: ${appData.name}`;
+            }
+
+            await pushToGitHub(commitMessage);
+        }
+
+        // 9. دالة الرفع الأساسية للـ GitHub
+        async function pushToGitHub(commitMessage) {
+            const token = document.getElementById('githubToken').value;
+            const owner = document.getElementById('githubOwner').value;
+            const repo = document.getElementById('githubRepo').value;
+            const path = document.getElementById('filePath').value;
+            const status = document.getElementById('statusMsg');
 
             try {
-                // 1. جلب الملف الحالي من GitHub
+                // تحويل البيانات لـ Base64 بأمان للغة العربية
+                const updatedContentBase64 = btoa(unescape(encodeURIComponent(JSON.stringify(currentStoreData, null, 2))));
                 const url = `https://api.github.com/repos/${owner}/${repo}/contents/${path}`;
-                const getResponse = await fetch(url, {
-                    headers: { "Authorization": `token ${token}` }
-                });
 
-                if (!getResponse.ok) {
-                    throw new Error("لم نتمكن من الوصول للملف، تأكد من صحة التوكن والمسار.");
-                }
-
-                const fileData = await getResponse.json();
-                const sha = fileData.sha;
-                
-                // فك تشفير محتوى الملف الحالي من Base64
-                const currentContentDecoded = decodeURIComponent(atob(fileData.content).split('').map(function(c) {
-                    return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2);
-                }).join(''));
-
-                let storeData = JSON.parse(currentContentDecoded);
-
-                // التأكد من وجود مصفوفة التطبيقات
-                if (!storeData.apps) storeData.apps = [];
-
-                // 2. تجميع بيانات التطبيق الجديد
-                const sizeInMB = parseFloat(document.getElementById('appSize').value);
-                const sizeInBytes = Math.round(sizeInMB * 1024 * 1024); // تحويل الميجابايت إلى بايت
-
-                const newApp = {
-                    name: document.getElementById('appName').value,
-                    bundleIdentifier: document.getElementById('bundleId').value,
-                    developerName: document.getElementById('developer').value || "Hassany",
-                    version: document.getElementById('appVersion').value,
-                    versionDate: new Date().toISOString(), // توليد التاريخ التلقائي للترتيب بالمتجر
-                    versionDescription: document.getElementById('versionDesc').value || "إصدار جديد ومستقر.",
-                    downloadURL: document.getElementById('downloadUrl').value,
-                    localizedDescription: document.getElementById('appDesc').value,
-                    iconURL: document.getElementById('iconUrl').value,
-                    size: sizeInBytes,
-                    tintColor: document.getElementById('tintColor').value || "a855f7"
-                };
-
-                // إضافة التطبيق الجديد في بداية القائمة (لتظهر الأحدث أولاً)
-                storeData.apps.unshift(newApp);
-
-                // 3. رفع الملف الجديد المشفر بـ Base64 إلى GitHub
-                const updatedContentBase64 = btoa(unescape(encodeURIComponent(JSON.stringify(storeData, null, 2))));
-                
-                const putResponse = await fetch(url, {
+                const response = await fetch(url, {
                     method: "PUT",
                     headers: {
                         "Authorization": `token ${token}`,
                         "Content-Type": "application/json"
                     },
                     body: JSON.stringify({
-                        message: `🚀 إضافة تطبيق جديد: ${newApp.name}`,
+                        message: commitMessage,
                         content: updatedContentBase64,
-                        sha: sha
+                        sha: currentFileSha // نرسل الـ SHA الحالي حتى يسمح بالتعديل
                     })
                 });
 
-                if (putResponse.ok) {
-                    status.className = "text-green-500 font-bold";
-                    status.innerText = `✅ تم رفع تطبيق ${newApp.name} وظهر في واجهة المتجر بنجاح!`;
-                    document.getElementById('appForm').reset();
+                if (response.ok) {
+                    const responseData = await response.json();
+                    currentFileSha = responseData.content.sha; // تحديث الـ SHA الجديد
+                    
+                    status.className = "text-green-500 font-bold mt-2";
+                    status.innerText = "✅ تمت العملية بنجاح!";
+                    
+                    cancelEdit(); // تصفير الاستمارة
+                    renderAppsList(); // تحديث القائمة الجانبية
                 } else {
-                    const errData = await putResponse.json();
-                    throw new Error(errData.message || "فشل تحديث الملف.");
+                    const err = await response.json();
+                    throw new Error(err.message);
                 }
-
             } catch (error) {
-                status.className = "text-red-500 font-bold";
+                status.className = "text-red-500 font-bold mt-2";
                 status.innerText = `❌ خطأ: ${error.message}`;
             } finally {
-                btn.disabled = false;
-                btn.innerHTML = "<span>🚀</span> رفع التطبيق للمتجر الآن";
+                document.getElementById('submitBtn').disabled = false;
             }
         }
     </script>

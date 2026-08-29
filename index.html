@@ -49,7 +49,7 @@
             max-width: 80%; 
             line-height: 1.6; 
             font-size: 0.95em; 
-            white-space: pre-wrap; /* للحفاظ على تنسيق الأسطر */
+            white-space: pre-wrap; 
         }
         .user-msg { 
             background: #dcf8c6; 
@@ -113,7 +113,7 @@
     </div>
 
     <script>
-        // ======= ضع مفتاح API الخاص بك هنا =======
+        // مفتاح API الخاص بك
         const GEMINI_API_KEY = "AQ.Ab8RN6KED_jMaHgLP7t9LB3CAjXGIb24KfxVcC9hlgOIVMR-jw"; 
 
         // تعليمات النظام
@@ -162,7 +162,8 @@
             // عرض مؤشر الكتابة
             const typingMsg = appendMessage('جاري التفكير...', 'bot-msg typing');
 
-            const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-3.1-flash-lite:generateContent`;
+            // تم تصحيح الرابط لموديل gemini-1.5-flash الرسمي وتمرير المفتاح في الرابط
+            const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${GEMINI_API_KEY}`;
             
             const payload = {
                 "systemInstruction": {
@@ -173,7 +174,7 @@
                 ],
                 "generationConfig": {
                     "maxOutputTokens": 8192,
-                    "thinkingConfig": { "thinkingBudget": 0 }
+                    "temperature": 0.7
                 }
             };
 
@@ -181,21 +182,21 @@
                 const response = await fetch(url, {
                     method: 'POST',
                     headers: {
-                        'Content-Type': 'application/json',
-                        'x-goog-api-key': GEMINI_API_KEY
+                        'Content-Type': 'application/json'
                     },
                     body: JSON.stringify(payload)
                 });
 
                 const data = await response.json();
 
-                if (data.candidates && data.candidates.length > 0) {
+                if (response.ok && data.candidates && data.candidates.length > 0) {
                     const botReply = data.candidates[0].content.parts[0].text;
-                    // تحديث رسالة المؤشر بالرد الفعلي وإزالة كلاس typing
                     typingMsg.innerText = botReply;
                     typingMsg.classList.remove('typing');
                 } else {
-                    typingMsg.innerText = "⚠️ عذراً، لم أتمكن من معالجة الرد.";
+                    // في حال رفضت جوجل الطلب، سيكتب لك سبب الرفض بالضبط
+                    const errorMsg = data.error ? data.error.message : "مشكلة غير معروفة في الرد.";
+                    typingMsg.innerText = "⚠️ خطأ من الخادم: " + errorMsg;
                     typingMsg.classList.remove('typing');
                 }
                 
@@ -203,14 +204,13 @@
 
             } catch (error) {
                 console.error(error);
-                typingMsg.innerText = "❌ حدث خطأ في الاتصال بالخادم. تأكد من مفتاح API.";
+                typingMsg.innerText = "❌ حدث خطأ في الاتصال بالانترنت أو بالخادم.";
                 typingMsg.classList.remove('typing');
             }
         }
 
         function appendMessage(text, className) {
             const div = document.createElement('div');
-            // فصل الكلاسات في حال كان هناك أكثر من كلاس (مثل bot-msg و typing)
             div.className = `message ${className}`;
             div.innerText = text;
             chatBox.appendChild(div);

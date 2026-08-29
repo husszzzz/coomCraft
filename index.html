@@ -34,7 +34,7 @@
 
     <script>
         // الصق المفتاح الجديد اللي يبدأ بـ AQ هنا
-        const GEMINI_API_KEY = "AQ.Ab8RN6I68Vj9taNfkKCIIwCf3SnpsJNBxtUfehAfWMet_fNC3g"; 
+        const GEMINI_API_KEY = "AQ.Ab8RN6L7Hp4XjDEE2ms_dOmHG9Rgsmkl-kXA0DUW7a3prRWWnw"; 
 
         const SYSTEM_INSTRUCTION = `أنت المساعد الذكي لبوت "متجر الحسني" (Hassany Store) على منصة تيليجرام. 
 مطور البوت والمدير العام هو "حسني" (بمعرف تيليجرام: @OM_G9، والايدي: 6799794121).
@@ -79,8 +79,8 @@
 
             const typingMsg = appendMessage('جاري التفكير...', 'bot-msg typing');
 
-            // إزالة المفتاح من الرابط
-            const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent`;
+            // تم تغيير اسم الموديل إلى gemini-1.5-flash-latest ليتوافق مع مفتاحك
+            const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash-latest:generateContent`;
             
             const payload = {
                 "systemInstruction": { "parts": [{ "text": SYSTEM_INSTRUCTION }] },
@@ -93,7 +93,7 @@
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
-                        'x-goog-api-key': GEMINI_API_KEY // إرسال المفتاح بالطريقة الصحيحة هنا
+                        'x-goog-api-key': GEMINI_API_KEY
                     },
                     body: JSON.stringify(payload)
                 });

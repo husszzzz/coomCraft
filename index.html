@@ -33,7 +33,7 @@
     </div>
 
     <script>
-        // الصق المفتاح الجديد اللي يبدأ بـ AQ هنا
+        // مفتاحك مدمج هنا وجاهز
         const GEMINI_API_KEY = "AQ.Ab8RN6L7Hp4XjDEE2ms_dOmHG9Rgsmkl-kXA0DUW7a3prRWWnw"; 
 
         const SYSTEM_INSTRUCTION = `أنت المساعد الذكي لبوت "متجر الحسني" (Hassany Store) على منصة تيليجرام. 
@@ -79,8 +79,8 @@
 
             const typingMsg = appendMessage('جاري التفكير...', 'bot-msg typing');
 
-            // تم تغيير اسم الموديل إلى gemini-1.5-flash-latest ليتوافق مع مفتاحك
-            const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash-latest:generateContent`;
+            // تم تصحيح اسم الموديل ليكون gemini-flash-latest حصراً
+            const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-flash-latest:generateContent`;
             
             const payload = {
                 "systemInstruction": { "parts": [{ "text": SYSTEM_INSTRUCTION }] },

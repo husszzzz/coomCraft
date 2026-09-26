@@ -1,0 +1,249 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Zone66 Control</title>
+<style>
+:root{--bg:#08090d;--card:#11131a;--card2:#171a23;--line:#252936;--accent:#ff3045;--text:#fff;--muted:#9298a8}
+*{box-sizing:border-box}body{margin:0;background:radial-gradient(circle at 20% 0%,#2a1016 0,#08090d 42%);color:var(--text);font-family:-apple-system,BlinkMacSystemFont,"SF Pro Display","Segoe UI",sans-serif}
+.wrap{max-width:1180px;margin:auto;padding:24px 16px 70px}.top{display:flex;justify-content:space-between;align-items:center;gap:12px;margin-bottom:20px}.brand h1{margin:0;font-size:28px}.brand p{margin:5px 0;color:var(--muted)}
+.grid{display:grid;grid-template-columns:320px 1fr;gap:16px}@media(max-width:800px){.grid{grid-template-columns:1fr}}
+.card{background:rgba(17,19,26,.94);border:1px solid var(--line);border-radius:22px;padding:18px;box-shadow:0 20px 60px #0004}
+h2{font-size:17px;margin:0 0 14px}.field{margin:10px 0}.field label{display:block;color:var(--muted);font-size:12px;margin-bottom:6px}
+input,textarea,select{width:100%;background:#0b0d12;border:1px solid var(--line);border-radius:12px;color:#fff;padding:12px;outline:none}textarea{min-height:90px;resize:vertical}
+button{border:0;border-radius:12px;padding:11px 14px;background:var(--card2);color:#fff;font-weight:700;cursor:pointer}button.primary{background:var(--accent);color:#fff}button.danger{background:#35141a;color:#ff8b99}.row{display:flex;gap:8px;flex-wrap:wrap}.status{padding:10px;border-radius:12px;background:#0b0d12;color:var(--muted);margin-top:10px;font-size:12px}
+.list{display:grid;gap:10px;max-height:610px;overflow:auto}.item{display:flex;align-items:center;gap:10px;background:#0d0f15;border:1px solid var(--line);border-radius:16px;padding:10px}.logo{width:48px;height:48px;border-radius:12px;object-fit:cover;background:#191c25}.grow{flex:1;min-width:0}.name{font-weight:800;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.meta{font-size:11px;color:var(--muted);margin-top:4px}.pill{font-size:10px;padding:5px 8px;border-radius:999px;background:#251015;color:#ff8b99}
+.hidden{display:none}.tabs{display:flex;gap:8px;margin-bottom:14px}.tabs button.active{background:var(--accent)}
+hr{border:0;border-top:1px solid var(--line);margin:16px 0}
+.notice{font-size:12px;color:#ffb3bc;line-height:1.7}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="top">
+    <div class="brand">
+      <h1>Zone66 Control</h1>
+      <p>لوحة إدارة القنوات والإعدادات</p>
+    </div>
+    <div class="row">
+      <button onclick="loadAll()">تحديث</button>
+      <button class="primary" onclick="saveAll()">حفظ التغييرات</button>
+    </div>
+  </div>
+
+  <div class="grid">
+    <aside class="card">
+      <h2>اتصال GitHub</h2>
+      <div class="field"><label>Owner</label><input id="owner" value="husszzzz"></div>
+      <div class="field"><label>Repository</label><input id="repo" value="Zone66-Player"></div>
+      <div class="field"><label>Branch</label><input id="branch" value="main"></div>
+      <div class="field"><label>GitHub Token</label><input id="token" type="password" placeholder="يُستخدم في الذاكرة فقط"></div>
+      <div class="field"><label>ملف القنوات</label><input id="channelsPath" value="Data/channels.json"></div>
+      <div class="field"><label>ملف الإعدادات</label><input id="settingsPath" value="Data/settings.json"></div>
+      <div class="row">
+        <button class="primary" onclick="connect()">اتصال وفحص</button>
+        <button onclick="clearToken()">مسح التوكن</button>
+      </div>
+      <div id="status" class="status">غير متصل</div>
+      <hr>
+      <div class="notice">
+        استخدم فقط روابط بث ومحتوى لديك الحق في توزيعه أو استخدامه.
+        لا يتم حفظ التوكن في localStorage.
+      </div>
+    </aside>
+
+    <main>
+      <div class="tabs">
+        <button id="tabChannels" class="active" onclick="showTab('channels')">القنوات</button>
+        <button id="tabSettings" onclick="showTab('settings')">الإعدادات</button>
+      </div>
+
+      <section id="channelsTab" class="card">
+        <div class="row" style="justify-content:space-between;align-items:center">
+          <h2>القنوات</h2>
+          <button class="primary" onclick="newChannel()">+ إضافة قناة</button>
+        </div>
+        <div id="channelList" class="list"></div>
+      </section>
+
+      <section id="settingsTab" class="card hidden">
+        <h2>هوية التطبيق</h2>
+        <div class="field"><label>اسم التطبيق</label><input id="appName"></div>
+        <div class="field"><label>العنوان الرئيسي</label><input id="heroTitle"></div>
+        <div class="field"><label>الوصف</label><textarea id="heroSubtitle"></textarea></div>
+        <div class="field"><label>نص زر المشاهدة</label><input id="heroButtonTitle"></div>
+        <div class="field"><label>عنوان رابط الدعم</label><input id="supportTitle"></div>
+        <div class="field"><label>رابط الدعم/القناة</label><input id="supportURL" dir="ltr"></div>
+        <div class="field"><label>لون التطبيق HEX</label><input id="accentHex" value="#FF3045" dir="ltr"></div>
+      </section>
+    </main>
+  </div>
+</div>
+
+<div id="editor" class="hidden" style="position:fixed;inset:0;background:#000b;display:none;align-items:flex-end;justify-content:center;padding:12px;z-index:5">
+  <div class="card" style="width:min(700px,100%);max-height:92vh;overflow:auto">
+    <div class="row" style="justify-content:space-between"><h2 id="editorTitle">إضافة قناة</h2><button onclick="closeEditor()">إغلاق</button></div>
+    <input id="editId" type="hidden">
+    <div class="field"><label>اسم القناة</label><input id="editName"></div>
+    <div class="field"><label>التصنيف</label><input id="editCategory"></div>
+    <div class="field"><label>رابط البث</label><input id="editURL" dir="ltr"></div>
+    <div class="field"><label>رابط الأيقونة</label><input id="editIcon" dir="ltr"></div>
+    <div class="row">
+      <label><input id="editFeatured" type="checkbox" style="width:auto"> مميزة</label>
+      <label><input id="editEnabled" type="checkbox" style="width:auto" checked> مفعلة</label>
+    </div>
+    <div class="row" style="margin-top:16px">
+      <button class="primary" onclick="saveChannel()">حفظ القناة</button>
+      <button class="danger" onclick="deleteChannel()">حذف</button>
+    </div>
+  </div>
+</div>
+
+<script>
+let token="", channels=[], settings={}, channelSha=null, settingsSha=null, connected=false;
+
+const $=id=>document.getElementById(id);
+function apiBase(){return `https://api.github.com/repos/${encodeURIComponent($('owner').value.trim())}/${encodeURIComponent($('repo').value.trim())}`;}
+function headers(){return {'Accept':'application/vnd.github+json','Authorization':'Bearer '+token,'X-GitHub-Api-Version':'2022-11-28','Content-Type':'application/json'};}
+function setStatus(t,good=false){$('status').textContent=t;$('status').style.color=good?'#7dffb2':'#9298a8';}
+
+function clearToken(){token='';$('token').value='';connected=false;setStatus('توكن ممسوح');}
+
+async function getFile(path){
+  const r=await fetch(apiBase()+"/contents/"+path+"?ref="+encodeURIComponent($('branch').value.trim()),{headers:headers()});
+  if(r.status===404)return {data:null,sha:null};
+  if(!r.ok)throw new Error(await r.text());
+  const x=await r.json();
+  const raw=atob((x.content||'').replace(/\n/g,''));
+  const bytes=Uint8Array.from(raw,c=>c.charCodeAt(0));
+  return {data:new TextDecoder().decode(bytes),sha:x.sha};
+}
+
+async function connect(){
+  token=$('token').value.trim();
+  if(!token){setStatus('أدخل التوكن');return}
+  try{
+    const r=await fetch(apiBase(),{headers:headers()});
+    if(!r.ok)throw new Error('تعذر الوصول إلى المستودع');
+    connected=true;
+    await loadAll();
+  }catch(e){connected=false;setStatus('فشل الاتصال: '+e.message)}
+}
+
+async function loadAll(){
+  if(!token){setStatus('أدخل التوكن أولاً');return}
+  try{
+    setStatus('جاري تحميل البيانات…');
+    const c=await getFile($('channelsPath').value.trim());
+    const s=await getFile($('settingsPath').value.trim());
+    channelSha=c.sha; settingsSha=s.sha;
+    channels=c.data?JSON.parse(c.data):[];
+    settings=s.data?JSON.parse(s.data):{};
+    render();
+    fillSettings();
+    setStatus(`تم التحميل: ${channels.length} قناة`,true);
+  }catch(e){setStatus('خطأ: '+e.message)}
+}
+
+function render(){
+  $('channelList').innerHTML='';
+  if(!channels.length){
+    $('channelList').innerHTML='<div class="status">لا توجد قنوات. أضف أول قناة من زر + إضافة قناة.</div>';return;
+  }
+  channels.forEach((c,i)=>{
+    const el=document.createElement('div');el.className='item';
+    el.innerHTML=`
+      <img class="logo" src="${escapeAttr(c.iconURL||'')}" onerror="this.style.display='none'">
+      <div class="grow"><div class="name">${escapeHtml(c.name)}</div><div class="meta">${escapeHtml(c.category)} · ${c.enabled?'مفعلة':'متوقفة'}</div></div>
+      ${c.isFeatured?'<span class="pill">مميزة</span>':''}
+      <button onclick="editChannel(${i})">تعديل</button>`;
+    $('channelList').appendChild(el);
+  });
+}
+
+function newChannel(){
+  $('editorTitle').textContent='إضافة قناة';
+  $('editId').value='';
+  $('editName').value='';$('editCategory').value='رياضة';$('editURL').value='';$('editIcon').value='';
+  $('editFeatured').checked=false;$('editEnabled').checked=true;
+  $('editor').style.display='flex';
+}
+function editChannel(i){
+  const c=channels[i];
+  $('editorTitle').textContent='تعديل القناة';
+  $('editId').value=c.id;$('editName').value=c.name;$('editCategory').value=c.category;
+  $('editURL').value=c.url;$('editIcon').value=c.iconURL||'';
+  $('editFeatured').checked=!!c.isFeatured;$('editEnabled').checked=c.enabled!==false;
+  $('editor').dataset.index=i;$('editor').style.display='flex';
+}
+function closeEditor(){$('editor').style.display='none'}
+function saveChannel(){
+  const name=$('editName').value.trim(), category=$('editCategory').value.trim(), url=$('editURL').value.trim();
+  if(!name||!category||!url){alert('الاسم والتصنيف والرابط مطلوبة');return}
+  const index=$('editor').dataset.index;
+  const c={
+    id:$('editId').value||crypto.randomUUID(),
+    name,category,url,
+    iconURL:$('editIcon').value.trim(),
+    isFeatured:$('editFeatured').checked,
+    enabled:$('editEnabled').checked
+  };
+  if(index!==undefined && index!=='')channels[Number(index)]=c;else channels.unshift(c);
+  delete $('editor').dataset.index;closeEditor();render();
+}
+function deleteChannel(){
+  const id=$('editId').value;
+  if(!id)return closeEditor();
+  if(confirm('حذف هذه القناة؟')){channels=channels.filter(c=>c.id!==id);closeEditor();render()}
+}
+function fillSettings(){
+  $('appName').value=settings.appName||'Zone66 TV';
+  $('heroTitle').value=settings.heroTitle||'تجربة مشاهدة احترافية';
+  $('heroSubtitle').value=settings.heroSubtitle||'قنواتك المفضلة في مكان واحد';
+  $('heroButtonTitle').value=settings.heroButtonTitle||'مشاهدة القنوات';
+  $('supportTitle').value=settings.supportTitle||'قناة التحديثات';
+  $('supportURL').value=settings.supportURL||'';
+  $('accentHex').value=settings.accentHex||'#FF3045';
+}
+function readSettings(){
+  return {
+    appName:$('appName').value.trim(),
+    heroTitle:$('heroTitle').value.trim(),
+    heroSubtitle:$('heroSubtitle').value.trim(),
+    heroButtonTitle:$('heroButtonTitle').value.trim(),
+    supportTitle:$('supportTitle').value.trim(),
+    supportURL:$('supportURL').value.trim(),
+    accentHex:$('accentHex').value.trim()||'#FF3045'
+  };
+}
+
+async function putFile(path,content,sha,message){
+  const body={message,content:btoa(unescape(encodeURIComponent(content))),branch:$('branch').value.trim()};
+  if(sha)body.sha=sha;
+  const r=await fetch(apiBase()+"/contents/"+path,{method:'PUT',headers:headers(),body:JSON.stringify(body)});
+  if(!r.ok)throw new Error(await r.text());
+  return await r.json();
+}
+async function saveAll(){
+  if(!token){setStatus('أدخل التوكن أولاً');return}
+  try{
+    setStatus('جاري الحفظ…');
+    const c=await putFile($('channelsPath').value.trim(),JSON.stringify(channels,null,2),channelSha,'Zone66: تحديث القنوات');
+    channelSha=c.content.sha;
+    settings=readSettings();
+    const s=await putFile($('settingsPath').value.trim(),JSON.stringify(settings,null,2),settingsSha,'Zone66: تحديث الإعدادات');
+    settingsSha=s.content.sha;
+    setStatus('تم حفظ القنوات والإعدادات بنجاح',true);
+  }catch(e){setStatus('فشل الحفظ: '+e.message)}
+}
+function showTab(tab){
+  const c=tab==='channels';
+  $('channelsTab').classList.toggle('hidden',!c);$('settingsTab').classList.toggle('hidden',c);
+  $('tabChannels').classList.toggle('active',c);$('tabSettings').classList.toggle('active',!c);
+}
+function escapeHtml(s){return String(s).replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[m]))}
+function escapeAttr(s){return escapeHtml(s).replace(/`/g,'&#096;')}
+</script>
+</body>
+</html>

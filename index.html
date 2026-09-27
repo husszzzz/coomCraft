@@ -1,249 +1,1929 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="ar" dir="rtl">
 <head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Zone66 Control</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>Zone66 Control Panel</title>
+
 <style>
-:root{--bg:#08090d;--card:#11131a;--card2:#171a23;--line:#252936;--accent:#ff3045;--text:#fff;--muted:#9298a8}
-*{box-sizing:border-box}body{margin:0;background:radial-gradient(circle at 20% 0%,#2a1016 0,#08090d 42%);color:var(--text);font-family:-apple-system,BlinkMacSystemFont,"SF Pro Display","Segoe UI",sans-serif}
-.wrap{max-width:1180px;margin:auto;padding:24px 16px 70px}.top{display:flex;justify-content:space-between;align-items:center;gap:12px;margin-bottom:20px}.brand h1{margin:0;font-size:28px}.brand p{margin:5px 0;color:var(--muted)}
-.grid{display:grid;grid-template-columns:320px 1fr;gap:16px}@media(max-width:800px){.grid{grid-template-columns:1fr}}
-.card{background:rgba(17,19,26,.94);border:1px solid var(--line);border-radius:22px;padding:18px;box-shadow:0 20px 60px #0004}
-h2{font-size:17px;margin:0 0 14px}.field{margin:10px 0}.field label{display:block;color:var(--muted);font-size:12px;margin-bottom:6px}
-input,textarea,select{width:100%;background:#0b0d12;border:1px solid var(--line);border-radius:12px;color:#fff;padding:12px;outline:none}textarea{min-height:90px;resize:vertical}
-button{border:0;border-radius:12px;padding:11px 14px;background:var(--card2);color:#fff;font-weight:700;cursor:pointer}button.primary{background:var(--accent);color:#fff}button.danger{background:#35141a;color:#ff8b99}.row{display:flex;gap:8px;flex-wrap:wrap}.status{padding:10px;border-radius:12px;background:#0b0d12;color:var(--muted);margin-top:10px;font-size:12px}
-.list{display:grid;gap:10px;max-height:610px;overflow:auto}.item{display:flex;align-items:center;gap:10px;background:#0d0f15;border:1px solid var(--line);border-radius:16px;padding:10px}.logo{width:48px;height:48px;border-radius:12px;object-fit:cover;background:#191c25}.grow{flex:1;min-width:0}.name{font-weight:800;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.meta{font-size:11px;color:var(--muted);margin-top:4px}.pill{font-size:10px;padding:5px 8px;border-radius:999px;background:#251015;color:#ff8b99}
-.hidden{display:none}.tabs{display:flex;gap:8px;margin-bottom:14px}.tabs button.active{background:var(--accent)}
-hr{border:0;border-top:1px solid var(--line);margin:16px 0}
-.notice{font-size:12px;color:#ffb3bc;line-height:1.7}
+*{
+    box-sizing:border-box;
+    -webkit-tap-highlight-color:transparent;
+}
+
+:root{
+    --bg:#08090d;
+    --card:#11131a;
+    --card2:#171923;
+    --border:#242733;
+    --accent:#ff3046;
+    --accent2:#ff5668;
+    --text:#fff;
+    --muted:#9297a5;
+    --success:#22c55e;
+    --danger:#ef4444;
+    --warning:#f59e0b;
+}
+
+body{
+    margin:0;
+    background:
+        radial-gradient(circle at top right,rgba(255,48,70,.13),transparent 35%),
+        radial-gradient(circle at bottom left,rgba(255,48,70,.07),transparent 30%),
+        var(--bg);
+    color:var(--text);
+    font-family:-apple-system,BlinkMacSystemFont,"SF Pro Display","Segoe UI",Arial,sans-serif;
+    min-height:100vh;
+}
+
+button,input,textarea,select{
+    font:inherit;
+}
+
+button{
+    cursor:pointer;
+}
+
+.container{
+    width:min(1150px,calc(100% - 28px));
+    margin:auto;
+    padding:24px 0 50px;
+}
+
+/* HEADER */
+
+.header{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    gap:15px;
+    margin-bottom:22px;
+}
+
+.brand{
+    display:flex;
+    align-items:center;
+    gap:13px;
+}
+
+.logo{
+    width:52px;
+    height:52px;
+    border-radius:17px;
+    display:grid;
+    place-items:center;
+    background:linear-gradient(135deg,var(--accent),#8d1525);
+    box-shadow:0 12px 35px rgba(255,48,70,.25);
+    font-size:25px;
+    font-weight:900;
+}
+
+.brand h1{
+    margin:0;
+    font-size:23px;
+}
+
+.brand p{
+    margin:4px 0 0;
+    color:var(--muted);
+    font-size:13px;
+}
+
+.status{
+    display:flex;
+    align-items:center;
+    gap:8px;
+    padding:10px 14px;
+    background:var(--card);
+    border:1px solid var(--border);
+    border-radius:14px;
+    font-size:13px;
+}
+
+.status-dot{
+    width:9px;
+    height:9px;
+    border-radius:50%;
+    background:#666;
+}
+
+.status-dot.online{
+    background:var(--success);
+    box-shadow:0 0 12px rgba(34,197,94,.6);
+}
+
+/* LOGIN */
+
+.login{
+    max-width:520px;
+    margin:70px auto;
+    padding:30px;
+    background:rgba(17,19,26,.94);
+    border:1px solid var(--border);
+    border-radius:25px;
+    box-shadow:0 25px 80px rgba(0,0,0,.35);
+}
+
+.login-logo{
+    width:70px;
+    height:70px;
+    border-radius:22px;
+    margin:0 auto 18px;
+    display:grid;
+    place-items:center;
+    background:linear-gradient(135deg,var(--accent),#991b2d);
+    font-size:32px;
+    font-weight:900;
+}
+
+.login h2{
+    text-align:center;
+    margin:0 0 7px;
+}
+
+.login p{
+    text-align:center;
+    color:var(--muted);
+    margin:0 0 25px;
+    font-size:14px;
+}
+
+/* INPUTS */
+
+.field{
+    margin-bottom:15px;
+}
+
+.field label{
+    display:block;
+    color:#d8dbe2;
+    margin-bottom:8px;
+    font-size:13px;
+}
+
+input,
+textarea,
+select{
+    width:100%;
+    color:#fff;
+    background:#0c0e14;
+    border:1px solid var(--border);
+    border-radius:13px;
+    outline:none;
+    padding:13px 14px;
+    transition:.2s;
+}
+
+textarea{
+    min-height:100px;
+    resize:vertical;
+}
+
+input:focus,
+textarea:focus,
+select:focus{
+    border-color:var(--accent);
+    box-shadow:0 0 0 3px rgba(255,48,70,.10);
+}
+
+select option{
+    background:#11131a;
+}
+
+/* BUTTONS */
+
+.btn{
+    border:0;
+    border-radius:13px;
+    padding:12px 16px;
+    color:#fff;
+    background:#20232e;
+    font-weight:700;
+    transition:.2s;
+}
+
+.btn:hover{
+    transform:translateY(-1px);
+}
+
+.btn-primary{
+    background:linear-gradient(135deg,var(--accent),var(--accent2));
+    box-shadow:0 9px 25px rgba(255,48,70,.18);
+}
+
+.btn-danger{
+    background:#3a171d;
+    color:#ff7a89;
+}
+
+.btn-success{
+    background:#12331f;
+    color:#5ee28a;
+}
+
+.btn-small{
+    padding:9px 12px;
+    font-size:13px;
+}
+
+.full{
+    width:100%;
+}
+
+/* APP */
+
+.hidden{
+    display:none!important;
+}
+
+.dashboard{
+    display:none;
+}
+
+.dashboard.active{
+    display:block;
+}
+
+/* NAV */
+
+.nav{
+    display:flex;
+    gap:8px;
+    overflow:auto;
+    padding:5px;
+    background:rgba(17,19,26,.75);
+    border:1px solid var(--border);
+    border-radius:17px;
+    margin-bottom:20px;
+}
+
+.nav button{
+    white-space:nowrap;
+    border:0;
+    color:var(--muted);
+    background:transparent;
+    border-radius:12px;
+    padding:11px 17px;
+    font-weight:700;
+}
+
+.nav button.active{
+    color:#fff;
+    background:var(--accent);
+}
+
+/* CARDS */
+
+.panel{
+    background:rgba(17,19,26,.9);
+    border:1px solid var(--border);
+    border-radius:20px;
+    padding:20px;
+    margin-bottom:18px;
+}
+
+.panel-title{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    gap:12px;
+    margin-bottom:18px;
+}
+
+.panel-title h2{
+    margin:0;
+    font-size:18px;
+}
+
+.panel-title span{
+    color:var(--muted);
+    font-size:13px;
+}
+
+.grid{
+    display:grid;
+    grid-template-columns:repeat(2,minmax(0,1fr));
+    gap:14px;
+}
+
+.grid-3{
+    display:grid;
+    grid-template-columns:repeat(3,minmax(0,1fr));
+    gap:14px;
+}
+
+.stats{
+    display:grid;
+    grid-template-columns:repeat(3,1fr);
+    gap:12px;
+    margin-bottom:18px;
+}
+
+.stat{
+    padding:18px;
+    background:var(--card);
+    border:1px solid var(--border);
+    border-radius:17px;
+}
+
+.stat strong{
+    display:block;
+    font-size:26px;
+    margin-top:7px;
+}
+
+.stat span{
+    color:var(--muted);
+    font-size:12px;
+}
+
+/* CHANNEL */
+
+.channels{
+    display:grid;
+    gap:10px;
+}
+
+.channel{
+    display:flex;
+    align-items:center;
+    gap:13px;
+    padding:13px;
+    background:#0d0f15;
+    border:1px solid var(--border);
+    border-radius:16px;
+}
+
+.channel img{
+    width:55px;
+    height:55px;
+    border-radius:15px;
+    object-fit:cover;
+    background:#191c25;
+    flex:none;
+}
+
+.channel-info{
+    min-width:0;
+    flex:1;
+}
+
+.channel-info strong{
+    display:block;
+    white-space:nowrap;
+    overflow:hidden;
+    text-overflow:ellipsis;
+}
+
+.channel-info small{
+    display:block;
+    color:var(--muted);
+    margin-top:5px;
+}
+
+.badges{
+    display:flex;
+    gap:5px;
+    flex-wrap:wrap;
+    margin-top:7px;
+}
+
+.badge{
+    display:inline-block;
+    padding:4px 8px;
+    border-radius:8px;
+    background:#242732;
+    color:#bbb;
+    font-size:10px;
+}
+
+.badge.red{
+    color:#ff7886;
+    background:#38151c;
+}
+
+.actions{
+    display:flex;
+    gap:7px;
+    flex:none;
+}
+
+/* MODAL */
+
+.modal{
+    position:fixed;
+    inset:0;
+    background:rgba(0,0,0,.72);
+    backdrop-filter:blur(8px);
+    z-index:100;
+    display:none;
+    align-items:center;
+    justify-content:center;
+    padding:18px;
+}
+
+.modal.show{
+    display:flex;
+}
+
+.modal-box{
+    width:min(650px,100%);
+    max-height:90vh;
+    overflow:auto;
+    background:#11131a;
+    border:1px solid var(--border);
+    border-radius:24px;
+    padding:22px;
+    box-shadow:0 30px 100px #000;
+}
+
+.modal-header{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    margin-bottom:18px;
+}
+
+.modal-header h2{
+    margin:0;
+}
+
+.close{
+    border:0;
+    background:#22252f;
+    color:#fff;
+    width:38px;
+    height:38px;
+    border-radius:12px;
+}
+
+/* CHECKBOX */
+
+.check{
+    display:flex;
+    align-items:center;
+    gap:10px;
+    background:#0c0e14;
+    border:1px solid var(--border);
+    border-radius:13px;
+    padding:13px;
+    margin-bottom:14px;
+}
+
+.check input{
+    width:19px;
+    height:19px;
+    accent-color:var(--accent);
+}
+
+/* TOAST */
+
+.toast{
+    position:fixed;
+    left:50%;
+    bottom:25px;
+    transform:translateX(-50%) translateY(20px);
+    opacity:0;
+    pointer-events:none;
+    z-index:200;
+    min-width:280px;
+    max-width:90%;
+    padding:14px 18px;
+    border-radius:14px;
+    background:#171a22;
+    border:1px solid var(--border);
+    box-shadow:0 15px 50px rgba(0,0,0,.4);
+    transition:.25s;
+    text-align:center;
+}
+
+.toast.show{
+    opacity:1;
+    transform:translateX(-50%) translateY(0);
+}
+
+.toast.success{
+    border-color:rgba(34,197,94,.35);
+}
+
+.toast.error{
+    border-color:rgba(239,68,68,.45);
+}
+
+/* LOADING */
+
+.loading{
+    text-align:center;
+    color:var(--muted);
+    padding:35px;
+}
+
+.spinner{
+    width:25px;
+    height:25px;
+    border:3px solid #333743;
+    border-top-color:var(--accent);
+    border-radius:50%;
+    animation:spin .7s linear infinite;
+    margin:0 auto 12px;
+}
+
+@keyframes spin{
+    to{transform:rotate(360deg)}
+}
+
+/* RESPONSIVE */
+
+@media(max-width:700px){
+    .container{
+        width:min(100% - 18px,1150px);
+        padding-top:15px;
+    }
+
+    .header{
+        align-items:flex-start;
+    }
+
+    .status{
+        font-size:11px;
+        padding:8px 10px;
+    }
+
+    .grid,
+    .grid-3{
+        grid-template-columns:1fr;
+    }
+
+    .stats{
+        grid-template-columns:1fr 1fr 1fr;
+    }
+
+    .stat{
+        padding:13px 9px;
+        text-align:center;
+    }
+
+    .stat strong{
+        font-size:21px;
+    }
+
+    .stat span{
+        font-size:10px;
+    }
+
+    .channel{
+        align-items:flex-start;
+    }
+
+    .actions{
+        flex-direction:column;
+    }
+
+    .actions .btn{
+        padding:8px;
+    }
+}
 </style>
 </head>
+
 <body>
-<div class="wrap">
-  <div class="top">
-    <div class="brand">
-      <h1>Zone66 Control</h1>
-      <p>لوحة إدارة القنوات والإعدادات</p>
-    </div>
-    <div class="row">
-      <button onclick="loadAll()">تحديث</button>
-      <button class="primary" onclick="saveAll()">حفظ التغييرات</button>
-    </div>
-  </div>
 
-  <div class="grid">
-    <aside class="card">
-      <h2>اتصال GitHub</h2>
-      <div class="field"><label>Owner</label><input id="owner" value="husszzzz"></div>
-      <div class="field"><label>Repository</label><input id="repo" value="Zone66-Player"></div>
-      <div class="field"><label>Branch</label><input id="branch" value="main"></div>
-      <div class="field"><label>GitHub Token</label><input id="token" type="password" placeholder="يُستخدم في الذاكرة فقط"></div>
-      <div class="field"><label>ملف القنوات</label><input id="channelsPath" value="Data/channels.json"></div>
-      <div class="field"><label>ملف الإعدادات</label><input id="settingsPath" value="Data/settings.json"></div>
-      <div class="row">
-        <button class="primary" onclick="connect()">اتصال وفحص</button>
-        <button onclick="clearToken()">مسح التوكن</button>
-      </div>
-      <div id="status" class="status">غير متصل</div>
-      <hr>
-      <div class="notice">
-        استخدم فقط روابط بث ومحتوى لديك الحق في توزيعه أو استخدامه.
-        لا يتم حفظ التوكن في localStorage.
-      </div>
-    </aside>
+<div class="container">
 
-    <main>
-      <div class="tabs">
-        <button id="tabChannels" class="active" onclick="showTab('channels')">القنوات</button>
-        <button id="tabSettings" onclick="showTab('settings')">الإعدادات</button>
-      </div>
+    <!-- LOGIN -->
+    <section id="loginScreen" class="login">
 
-      <section id="channelsTab" class="card">
-        <div class="row" style="justify-content:space-between;align-items:center">
-          <h2>القنوات</h2>
-          <button class="primary" onclick="newChannel()">+ إضافة قناة</button>
+        <div class="login-logo">Z</div>
+
+        <h2>Zone66 Control Panel</h2>
+        <p>إدارة قنوات ومحتوى Zone66 TV</p>
+
+        <div class="field">
+            <label>GitHub Owner</label>
+            <input id="owner" value="husszzzz">
         </div>
-        <div id="channelList" class="list"></div>
-      </section>
 
-      <section id="settingsTab" class="card hidden">
-        <h2>هوية التطبيق</h2>
-        <div class="field"><label>اسم التطبيق</label><input id="appName"></div>
-        <div class="field"><label>العنوان الرئيسي</label><input id="heroTitle"></div>
-        <div class="field"><label>الوصف</label><textarea id="heroSubtitle"></textarea></div>
-        <div class="field"><label>نص زر المشاهدة</label><input id="heroButtonTitle"></div>
-        <div class="field"><label>عنوان رابط الدعم</label><input id="supportTitle"></div>
-        <div class="field"><label>رابط الدعم/القناة</label><input id="supportURL" dir="ltr"></div>
-        <div class="field"><label>لون التطبيق HEX</label><input id="accentHex" value="#FF3045" dir="ltr"></div>
-      </section>
-    </main>
-  </div>
+        <div class="field">
+            <label>Repository</label>
+            <input id="repo" value="Zone66-Player">
+        </div>
+
+        <div class="field">
+            <label>Branch</label>
+            <input id="branch" value="main">
+        </div>
+
+        <div class="field">
+            <label>GitHub Token</label>
+            <input id="token" type="password" placeholder="ghp_...">
+        </div>
+
+        <button class="btn btn-primary full" onclick="connect()">
+            دخول إلى لوحة التحكم
+        </button>
+
+        <p style="margin-top:15px;margin-bottom:0;font-size:11px">
+            التوكن يبقى داخل الصفحة ولا يتم حفظه في LocalStorage.
+        </p>
+
+    </section>
+
+
+    <!-- DASHBOARD -->
+    <section id="dashboard" class="dashboard">
+
+        <header class="header">
+
+            <div class="brand">
+                <div class="logo">Z</div>
+
+                <div>
+                    <h1>Zone66 Control</h1>
+                    <p id="repoLabel">husszzzz / Zone66-Player</p>
+                </div>
+            </div>
+
+            <div class="status">
+                <span id="statusDot" class="status-dot"></span>
+                <span id="statusText">غير متصل</span>
+            </div>
+
+        </header>
+
+
+        <nav class="nav">
+
+            <button class="active" data-tab="channelsTab" onclick="showTab('channelsTab',this)">
+                📺 القنوات
+            </button>
+
+            <button data-tab="settingsTab" onclick="showTab('settingsTab',this)">
+                ⚙️ الإعدادات
+            </button>
+
+            <button data-tab="systemTab" onclick="showTab('systemTab',this)">
+                🛠 النظام
+            </button>
+
+        </nav>
+
+
+        <!-- CHANNELS -->
+
+        <section id="channelsTab">
+
+            <div class="stats">
+
+                <div class="stat">
+                    <span>إجمالي القنوات</span>
+                    <strong id="totalChannels">0</strong>
+                </div>
+
+                <div class="stat">
+                    <span>المفعلة</span>
+                    <strong id="enabledChannels">0</strong>
+                </div>
+
+                <div class="stat">
+                    <span>المميزة</span>
+                    <strong id="featuredChannels">0</strong>
+                </div>
+
+            </div>
+
+
+            <div class="panel">
+
+                <div class="panel-title">
+
+                    <div>
+                        <h2>قنوات Zone66</h2>
+                        <span>الإدارة تتم مباشرة من GitHub</span>
+                    </div>
+
+                    <button class="btn btn-primary" onclick="openAddChannel()">
+                        + إضافة قناة
+                    </button>
+
+                </div>
+
+                <div id="channelsList" class="channels">
+                    <div class="loading">
+                        <div class="spinner"></div>
+                        جاري تحميل القنوات...
+                    </div>
+                </div>
+
+            </div>
+
+        </section>
+
+
+        <!-- SETTINGS -->
+
+        <section id="settingsTab" class="hidden">
+
+            <div class="panel">
+
+                <div class="panel-title">
+                    <div>
+                        <h2>إعدادات التطبيق</h2>
+                        <span>تُحفظ داخل Data/settings.json</span>
+                    </div>
+                </div>
+
+                <div class="grid">
+
+                    <div class="field">
+                        <label>اسم التطبيق</label>
+                        <input id="settingAppName" value="Zone66 TV">
+                    </div>
+
+                    <div class="field">
+                        <label>عنوان البطل</label>
+                        <input id="settingHeroTitle" value="مشاهدة سينمائية متكاملة">
+                    </div>
+
+                    <div class="field">
+                        <label>الوصف</label>
+                        <input id="settingHeroSubtitle" value="قنوات مباشرة مع إدارة ومفضلة ومشغل مدمج">
+                    </div>
+
+                    <div class="field">
+                        <label>نص زر التشغيل</label>
+                        <input id="settingButtonTitle" value="تشغيل البث الآن">
+                    </div>
+
+                    <div class="field">
+                        <label>رابط قناة التحديثات</label>
+                        <input id="settingTelegram" placeholder="https://t.me/...">
+                    </div>
+
+                    <div class="field">
+                        <label>اللون الرئيسي</label>
+                        <input id="settingAccent" value="#ff3046">
+                    </div>
+
+                </div>
+
+                <button class="btn btn-primary" onclick="saveSettings()">
+                    حفظ الإعدادات
+                </button>
+
+            </div>
+
+        </section>
+
+
+        <!-- SYSTEM -->
+
+        <section id="systemTab" class="hidden">
+
+            <div class="panel">
+
+                <div class="panel-title">
+                    <div>
+                        <h2>النظام</h2>
+                        <span>أدوات إدارة المستودع</span>
+                    </div>
+                </div>
+
+                <div class="grid">
+
+                    <button class="btn" onclick="loadAll()">
+                        🔄 إعادة تحميل البيانات
+                    </button>
+
+                    <button class="btn btn-success" onclick="ensureFiles()">
+                        📁 إنشاء الملفات الناقصة
+                    </button>
+
+                    <button class="btn btn-danger" onclick="logout()">
+                        🚪 تسجيل الخروج
+                    </button>
+
+                </div>
+
+                <div style="margin-top:18px;color:var(--muted);font-size:12px;line-height:1.8">
+                    الملفات المستخدمة:
+                    <br>
+                    <code>Data/channels.json</code>
+                    <br>
+                    <code>Data/settings.json</code>
+                </div>
+
+            </div>
+
+        </section>
+
+    </section>
+
 </div>
 
-<div id="editor" class="hidden" style="position:fixed;inset:0;background:#000b;display:none;align-items:flex-end;justify-content:center;padding:12px;z-index:5">
-  <div class="card" style="width:min(700px,100%);max-height:92vh;overflow:auto">
-    <div class="row" style="justify-content:space-between"><h2 id="editorTitle">إضافة قناة</h2><button onclick="closeEditor()">إغلاق</button></div>
-    <input id="editId" type="hidden">
-    <div class="field"><label>اسم القناة</label><input id="editName"></div>
-    <div class="field"><label>التصنيف</label><input id="editCategory"></div>
-    <div class="field"><label>رابط البث</label><input id="editURL" dir="ltr"></div>
-    <div class="field"><label>رابط الأيقونة</label><input id="editIcon" dir="ltr"></div>
-    <div class="row">
-      <label><input id="editFeatured" type="checkbox" style="width:auto"> مميزة</label>
-      <label><input id="editEnabled" type="checkbox" style="width:auto" checked> مفعلة</label>
+
+<!-- CHANNEL MODAL -->
+
+<div id="channelModal" class="modal">
+
+    <div class="modal-box">
+
+        <div class="modal-header">
+
+            <h2 id="modalTitle">إضافة قناة</h2>
+
+            <button class="close" onclick="closeModal()">×</button>
+
+        </div>
+
+
+        <input type="hidden" id="channelId">
+
+
+        <div class="grid">
+
+            <div class="field">
+                <label>اسم القناة</label>
+                <input id="channelName" placeholder="مثلاً: MBC 1">
+            </div>
+
+            <div class="field">
+                <label>التصنيف</label>
+                <input id="channelCategory" placeholder="أفلام">
+            </div>
+
+        </div>
+
+
+        <div class="field">
+            <label>وصف القناة</label>
+            <textarea id="channelDescription" placeholder="وصف مختصر للقناة"></textarea>
+        </div>
+
+
+        <div class="field">
+            <label>رابط صورة القناة</label>
+            <input id="channelIcon" placeholder="https://...">
+        </div>
+
+
+        <div class="field">
+            <label>رابط البث</label>
+            <input id="channelStream" placeholder="https://...">
+        </div>
+
+
+        <label class="check">
+            <input type="checkbox" id="channelEnabled" checked>
+            <span>القناة مفعلة</span>
+        </label>
+
+
+        <label class="check">
+            <input type="checkbox" id="channelFeatured">
+            <span>قناة مميزة 🔥</span>
+        </label>
+
+
+        <div class="grid">
+
+            <button class="btn" onclick="closeModal()">
+                إلغاء
+            </button>
+
+            <button class="btn btn-primary" onclick="saveChannel()">
+                حفظ القناة
+            </button>
+
+        </div>
+
     </div>
-    <div class="row" style="margin-top:16px">
-      <button class="primary" onclick="saveChannel()">حفظ القناة</button>
-      <button class="danger" onclick="deleteChannel()">حذف</button>
-    </div>
-  </div>
+
 </div>
+
+
+<div id="toast" class="toast"></div>
+
 
 <script>
-let token="", channels=[], settings={}, channelSha=null, settingsSha=null, connected=false;
+/* =========================================================
+   Zone66 Control Panel
+   GitHub Contents API
+   SHA-safe version
+========================================================= */
 
-const $=id=>document.getElementById(id);
-function apiBase(){return `https://api.github.com/repos/${encodeURIComponent($('owner').value.trim())}/${encodeURIComponent($('repo').value.trim())}`;}
-function headers(){return {'Accept':'application/vnd.github+json','Authorization':'Bearer '+token,'X-GitHub-Api-Version':'2022-11-28','Content-Type':'application/json'};}
-function setStatus(t,good=false){$('status').textContent=t;$('status').style.color=good?'#7dffb2':'#9298a8';}
+const API_VERSION = "2022-11-28";
 
-function clearToken(){token='';$('token').value='';connected=false;setStatus('توكن ممسوح');}
+let config = {
+    owner: "",
+    repo: "",
+    branch: "",
+    token: ""
+};
 
-async function getFile(path){
-  const r=await fetch(apiBase()+"/contents/"+path+"?ref="+encodeURIComponent($('branch').value.trim()),{headers:headers()});
-  if(r.status===404)return {data:null,sha:null};
-  if(!r.ok)throw new Error(await r.text());
-  const x=await r.json();
-  const raw=atob((x.content||'').replace(/\n/g,''));
-  const bytes=Uint8Array.from(raw,c=>c.charCodeAt(0));
-  return {data:new TextDecoder().decode(bytes),sha:x.sha};
+let channels = [];
+let settings = {};
+
+const CHANNELS_PATH = "Data/channels.json";
+const SETTINGS_PATH = "Data/settings.json";
+
+
+/* =========================================================
+   HELPERS
+========================================================= */
+
+function $(id){
+    return document.getElementById(id);
 }
+
+function toast(message,type=""){
+    const el = $("toast");
+
+    el.textContent = message;
+    el.className = "toast show " + type;
+
+    clearTimeout(window.toastTimer);
+
+    window.toastTimer = setTimeout(()=>{
+        el.className = "toast";
+    },3500);
+}
+
+
+function apiHeaders(){
+    return {
+        "Accept":"application/vnd.github+json",
+        "Authorization":"Bearer " + config.token,
+        "X-GitHub-Api-Version":API_VERSION
+    };
+}
+
+
+function apiURL(path){
+    return `https://api.github.com/repos/${encodeURIComponent(config.owner)}/${encodeURIComponent(config.repo)}/contents/${path}`;
+}
+
+
+async function githubRequest(url,options={}){
+    const response = await fetch(url,{
+        ...options,
+        headers:{
+            ...apiHeaders(),
+            ...(options.headers || {})
+        }
+    });
+
+    let data = null;
+
+    try{
+        data = await response.json();
+    }catch{
+        data = {};
+    }
+
+    if(!response.ok){
+        const error = new Error(
+            data.message || `GitHub Error ${response.status}`
+        );
+
+        error.status = response.status;
+        error.data = data;
+
+        throw error;
+    }
+
+    return data;
+}
+
+
+/* =========================================================
+   BASE64
+========================================================= */
+
+function encodeUTF8(text){
+    const bytes = new TextEncoder().encode(text);
+
+    let binary = "";
+
+    const chunk = 0x8000;
+
+    for(let i=0;i<bytes.length;i+=chunk){
+        binary += String.fromCharCode(
+            ...bytes.subarray(i,i+chunk)
+        );
+    }
+
+    return btoa(binary);
+}
+
+
+function decodeBase64(base64){
+    const binary = atob(base64.replace(/\n/g,""));
+
+    const bytes = new Uint8Array(binary.length);
+
+    for(let i=0;i<binary.length;i++){
+        bytes[i] = binary.charCodeAt(i);
+    }
+
+    return new TextDecoder("utf-8").decode(bytes);
+}
+
+
+/* =========================================================
+   CONNECT
+========================================================= */
 
 async function connect(){
-  token=$('token').value.trim();
-  if(!token){setStatus('أدخل التوكن');return}
-  try{
-    const r=await fetch(apiBase(),{headers:headers()});
-    if(!r.ok)throw new Error('تعذر الوصول إلى المستودع');
-    connected=true;
-    await loadAll();
-  }catch(e){connected=false;setStatus('فشل الاتصال: '+e.message)}
+
+    const owner = $("owner").value.trim();
+    const repo = $("repo").value.trim();
+    const branch = $("branch").value.trim() || "main";
+    const token = $("token").value.trim();
+
+    if(!owner || !repo || !token){
+        toast("املأ Owner و Repository و Token","error");
+        return;
+    }
+
+    config = {
+        owner,
+        repo,
+        branch,
+        token
+    };
+
+    $("repoLabel").textContent =
+        `${owner} / ${repo} • ${branch}`;
+
+    try{
+
+        $("statusText").textContent = "جاري الاتصال...";
+
+        await githubRequest(
+            `https://api.github.com/repos/${encodeURIComponent(owner)}/${encodeURIComponent(repo)}`
+        );
+
+        $("statusDot").classList.add("online");
+        $("statusText").textContent = "متصل";
+
+        $("loginScreen").style.display = "none";
+        $("dashboard").classList.add("active");
+
+        await loadAll();
+
+    }catch(error){
+
+        console.error(error);
+
+        $("statusDot").classList.remove("online");
+        $("statusText").textContent = "فشل الاتصال";
+
+        toast(
+            error.data?.message || error.message,
+            "error"
+        );
+    }
 }
+
+
+/* =========================================================
+   READ FILE
+========================================================= */
+
+/*
+   مهم:
+   هذه الدالة دائماً تجيب SHA جديد من GitHub.
+   لا تستخدم SHA قديم مخزن.
+*/
+
+async function getFile(path){
+
+    const url =
+        apiURL(path) +
+        `?ref=${encodeURIComponent(config.branch)}&_=${Date.now()}`;
+
+    try{
+
+        const data = await githubRequest(url,{
+            cache:"no-store"
+        });
+
+        return {
+            exists:true,
+            sha:data.sha,
+            content:decodeBase64(data.content || ""),
+            raw:data
+        };
+
+    }catch(error){
+
+        if(error.status === 404){
+
+            return {
+                exists:false,
+                sha:null,
+                content:null,
+                raw:null
+            };
+
+        }
+
+        throw error;
+    }
+}
+
+
+/* =========================================================
+   WRITE FILE
+========================================================= */
+
+/*
+   هذه أهم دالة في اللوحة.
+
+   كل مرة:
+   1. نقرأ الملف من GitHub
+   2. نأخذ SHA الحالي
+   3. نعمل PUT
+   4. إذا صار 409 نعيد قراءة SHA
+   5. نحاول مرة ثانية
+*/
+
+async function writeFile(path,content,message){
+
+    const encoded = encodeUTF8(content);
+
+    for(let attempt=1;attempt<=2;attempt++){
+
+        const current = await getFile(path);
+
+        const body = {
+            message:message,
+            content:encoded,
+            branch:config.branch
+        };
+
+        if(current.exists && current.sha){
+            body.sha = current.sha;
+        }
+
+        try{
+
+            return await githubRequest(
+                apiURL(path),
+                {
+                    method:"PUT",
+                    body:JSON.stringify(body)
+                }
+            );
+
+        }catch(error){
+
+            if(error.status === 409 && attempt === 1){
+
+                toast(
+                    "تم تحديث الملف من GitHub، أعيد المحاولة...",
+                    ""
+                );
+
+                await new Promise(resolve =>
+                    setTimeout(resolve,700)
+                );
+
+                continue;
+            }
+
+            throw error;
+        }
+    }
+
+    throw new Error("تعذر تحديث الملف.");
+}
+
+
+/* =========================================================
+   LOAD ALL
+========================================================= */
 
 async function loadAll(){
-  if(!token){setStatus('أدخل التوكن أولاً');return}
-  try{
-    setStatus('جاري تحميل البيانات…');
-    const c=await getFile($('channelsPath').value.trim());
-    const s=await getFile($('settingsPath').value.trim());
-    channelSha=c.sha; settingsSha=s.sha;
-    channels=c.data?JSON.parse(c.data):[];
-    settings=s.data?JSON.parse(s.data):{};
-    render();
-    fillSettings();
-    setStatus(`تم التحميل: ${channels.length} قناة`,true);
-  }catch(e){setStatus('خطأ: '+e.message)}
+
+    try{
+
+        $("channelsList").innerHTML = `
+            <div class="loading">
+                <div class="spinner"></div>
+                جاري تحميل القنوات...
+            </div>
+        `;
+
+        const [channelsFile,settingsFile] =
+            await Promise.all([
+                getFile(CHANNELS_PATH),
+                getFile(SETTINGS_PATH)
+            ]);
+
+
+        /* CHANNELS */
+
+        if(channelsFile.exists){
+
+            try{
+
+                const parsed =
+                    JSON.parse(channelsFile.content);
+
+                if(Array.isArray(parsed)){
+                    channels = parsed;
+                }else if(Array.isArray(parsed.channels)){
+                    channels = parsed.channels;
+                }else{
+                    channels = [];
+                }
+
+            }catch{
+
+                throw new Error(
+                    "ملف channels.json يحتوي JSON غير صالح."
+                );
+            }
+
+        }else{
+
+            channels = [];
+
+        }
+
+
+        /* SETTINGS */
+
+        if(settingsFile.exists){
+
+            try{
+                settings =
+                    JSON.parse(settingsFile.content);
+            }catch{
+                settings = {};
+            }
+
+        }else{
+
+            settings = {};
+
+        }
+
+
+        renderChannels();
+        renderSettings();
+
+        toast("تم تحديث البيانات","success");
+
+    }catch(error){
+
+        console.error(error);
+
+        $("channelsList").innerHTML = `
+            <div class="loading">
+                تعذر تحميل البيانات<br>
+                <small>${escapeHTML(error.message)}</small>
+            </div>
+        `;
+
+        toast(
+            error.data?.message || error.message,
+            "error"
+        );
+    }
 }
 
-function render(){
-  $('channelList').innerHTML='';
-  if(!channels.length){
-    $('channelList').innerHTML='<div class="status">لا توجد قنوات. أضف أول قناة من زر + إضافة قناة.</div>';return;
-  }
-  channels.forEach((c,i)=>{
-    const el=document.createElement('div');el.className='item';
-    el.innerHTML=`
-      <img class="logo" src="${escapeAttr(c.iconURL||'')}" onerror="this.style.display='none'">
-      <div class="grow"><div class="name">${escapeHtml(c.name)}</div><div class="meta">${escapeHtml(c.category)} · ${c.enabled?'مفعلة':'متوقفة'}</div></div>
-      ${c.isFeatured?'<span class="pill">مميزة</span>':''}
-      <button onclick="editChannel(${i})">تعديل</button>`;
-    $('channelList').appendChild(el);
-  });
+
+/* =========================================================
+   CHANNELS UI
+========================================================= */
+
+function renderChannels(){
+
+    $("totalChannels").textContent =
+        channels.length;
+
+    $("enabledChannels").textContent =
+        channels.filter(c => c.enabled !== false).length;
+
+    $("featuredChannels").textContent =
+        channels.filter(c => c.featured === true).length;
+
+
+    if(!channels.length){
+
+        $("channelsList").innerHTML = `
+            <div class="loading">
+                لا توجد قنوات حالياً.<br>
+                اضغط "إضافة قناة" لإنشاء أول قناة.
+            </div>
+        `;
+
+        return;
+    }
+
+
+    $("channelsList").innerHTML =
+        channels.map((channel,index)=>{
+
+            const icon =
+                channel.icon ||
+                channel.iconURL ||
+                channel.image ||
+                "";
+
+            const name =
+                channel.name ||
+                "بدون اسم";
+
+            const category =
+                channel.category ||
+                "عام";
+
+            const enabled =
+                channel.enabled !== false;
+
+            const featured =
+                channel.featured === true;
+
+            return `
+                <div class="channel">
+
+                    <img
+                        src="${escapeAttribute(icon)}"
+                        onerror="this.style.opacity='.2'"
+                    >
+
+                    <div class="channel-info">
+
+                        <strong>
+                            ${escapeHTML(name)}
+                        </strong>
+
+                        <small>
+                            ${escapeHTML(category)}
+                        </small>
+
+                        <div class="badges">
+
+                            ${
+                                enabled
+                                ? `<span class="badge red">مفعلة</span>`
+                                : `<span class="badge">متوقفة</span>`
+                            }
+
+                            ${
+                                featured
+                                ? `<span class="badge red">🔥 مميزة</span>`
+                                : ""
+                            }
+
+                        </div>
+
+                    </div>
+
+
+                    <div class="actions">
+
+                        <button
+                            class="btn btn-small"
+                            onclick="editChannel(${index})">
+                            تعديل
+                        </button>
+
+                        <button
+                            class="btn btn-small btn-danger"
+                            onclick="deleteChannel(${index})">
+                            حذف
+                        </button>
+
+                    </div>
+
+                </div>
+            `;
+
+        }).join("");
 }
 
-function newChannel(){
-  $('editorTitle').textContent='إضافة قناة';
-  $('editId').value='';
-  $('editName').value='';$('editCategory').value='رياضة';$('editURL').value='';$('editIcon').value='';
-  $('editFeatured').checked=false;$('editEnabled').checked=true;
-  $('editor').style.display='flex';
-}
-function editChannel(i){
-  const c=channels[i];
-  $('editorTitle').textContent='تعديل القناة';
-  $('editId').value=c.id;$('editName').value=c.name;$('editCategory').value=c.category;
-  $('editURL').value=c.url;$('editIcon').value=c.iconURL||'';
-  $('editFeatured').checked=!!c.isFeatured;$('editEnabled').checked=c.enabled!==false;
-  $('editor').dataset.index=i;$('editor').style.display='flex';
-}
-function closeEditor(){$('editor').style.display='none'}
-function saveChannel(){
-  const name=$('editName').value.trim(), category=$('editCategory').value.trim(), url=$('editURL').value.trim();
-  if(!name||!category||!url){alert('الاسم والتصنيف والرابط مطلوبة');return}
-  const index=$('editor').dataset.index;
-  const c={
-    id:$('editId').value||crypto.randomUUID(),
-    name,category,url,
-    iconURL:$('editIcon').value.trim(),
-    isFeatured:$('editFeatured').checked,
-    enabled:$('editEnabled').checked
-  };
-  if(index!==undefined && index!=='')channels[Number(index)]=c;else channels.unshift(c);
-  delete $('editor').dataset.index;closeEditor();render();
-}
-function deleteChannel(){
-  const id=$('editId').value;
-  if(!id)return closeEditor();
-  if(confirm('حذف هذه القناة؟')){channels=channels.filter(c=>c.id!==id);closeEditor();render()}
-}
-function fillSettings(){
-  $('appName').value=settings.appName||'Zone66 TV';
-  $('heroTitle').value=settings.heroTitle||'تجربة مشاهدة احترافية';
-  $('heroSubtitle').value=settings.heroSubtitle||'قنواتك المفضلة في مكان واحد';
-  $('heroButtonTitle').value=settings.heroButtonTitle||'مشاهدة القنوات';
-  $('supportTitle').value=settings.supportTitle||'قناة التحديثات';
-  $('supportURL').value=settings.supportURL||'';
-  $('accentHex').value=settings.accentHex||'#FF3045';
-}
-function readSettings(){
-  return {
-    appName:$('appName').value.trim(),
-    heroTitle:$('heroTitle').value.trim(),
-    heroSubtitle:$('heroSubtitle').value.trim(),
-    heroButtonTitle:$('heroButtonTitle').value.trim(),
-    supportTitle:$('supportTitle').value.trim(),
-    supportURL:$('supportURL').value.trim(),
-    accentHex:$('accentHex').value.trim()||'#FF3045'
-  };
+
+function openAddChannel(){
+
+    $("modalTitle").textContent = "إضافة قناة";
+
+    $("channelId").value = "";
+
+    $("channelName").value = "";
+    $("channelCategory").value = "";
+    $("channelDescription").value = "";
+    $("channelIcon").value = "";
+    $("channelStream").value = "";
+
+    $("channelEnabled").checked = true;
+    $("channelFeatured").checked = false;
+
+    $("channelModal").classList.add("show");
 }
 
-async function putFile(path,content,sha,message){
-  const body={message,content:btoa(unescape(encodeURIComponent(content))),branch:$('branch').value.trim()};
-  if(sha)body.sha=sha;
-  const r=await fetch(apiBase()+"/contents/"+path,{method:'PUT',headers:headers(),body:JSON.stringify(body)});
-  if(!r.ok)throw new Error(await r.text());
-  return await r.json();
+
+function editChannel(index){
+
+    const c = channels[index];
+
+    if(!c) return;
+
+    $("modalTitle").textContent = "تعديل القناة";
+
+    $("channelId").value = index;
+
+    $("channelName").value =
+        c.name || "";
+
+    $("channelCategory").value =
+        c.category || "";
+
+    $("channelDescription").value =
+        c.description || "";
+
+    $("channelIcon").value =
+        c.icon ||
+        c.iconURL ||
+        c.image ||
+        "";
+
+    $("channelStream").value =
+        c.streamURL ||
+        c.streamUrl ||
+        c.url ||
+        c.stream ||
+        "";
+
+    $("channelEnabled").checked =
+        c.enabled !== false;
+
+    $("channelFeatured").checked =
+        c.featured === true;
+
+    $("channelModal").classList.add("show");
 }
-async function saveAll(){
-  if(!token){setStatus('أدخل التوكن أولاً');return}
-  try{
-    setStatus('جاري الحفظ…');
-    const c=await putFile($('channelsPath').value.trim(),JSON.stringify(channels,null,2),channelSha,'Zone66: تحديث القنوات');
-    channelSha=c.content.sha;
-    settings=readSettings();
-    const s=await putFile($('settingsPath').value.trim(),JSON.stringify(settings,null,2),settingsSha,'Zone66: تحديث الإعدادات');
-    settingsSha=s.content.sha;
-    setStatus('تم حفظ القنوات والإعدادات بنجاح',true);
-  }catch(e){setStatus('فشل الحفظ: '+e.message)}
+
+
+function closeModal(){
+    $("channelModal").classList.remove("show");
 }
-function showTab(tab){
-  const c=tab==='channels';
-  $('channelsTab').classList.toggle('hidden',!c);$('settingsTab').classList.toggle('hidden',c);
-  $('tabChannels').classList.toggle('active',c);$('tabSettings').classList.toggle('active',!c);
+
+
+/* =========================================================
+   SAVE CHANNEL
+========================================================= */
+
+async function saveChannel(){
+
+    const name =
+        $("channelName").value.trim();
+
+    const category =
+        $("channelCategory").value.trim();
+
+    const description =
+        $("channelDescription").value.trim();
+
+    const icon =
+        $("channelIcon").value.trim();
+
+    const streamURL =
+        $("channelStream").value.trim();
+
+    const enabled =
+        $("channelEnabled").checked;
+
+    const featured =
+        $("channelFeatured").checked;
+
+    if(!name){
+        toast("اكتب اسم القناة","error");
+        return;
+    }
+
+    if(!streamURL){
+        toast("اكتب رابط البث","error");
+        return;
+    }
+
+
+    const index =
+        $("channelId").value;
+
+
+    const channel = {
+
+        id:
+            index === ""
+            ? createID()
+            : channels[Number(index)]?.id || createID(),
+
+        name:name,
+
+        category:
+            category || "عام",
+
+        description:description,
+
+        icon:icon,
+
+        streamURL:streamURL,
+
+        enabled:enabled,
+
+        featured:featured
+
+    };
+
+
+    if(index === ""){
+
+        channels.push(channel);
+
+    }else{
+
+        channels[Number(index)] = channel;
+
+    }
+
+
+    try{
+
+        closeModal();
+
+        toast("جاري حفظ القناة...");
+
+        await writeFile(
+            CHANNELS_PATH,
+            JSON.stringify(channels,null,2),
+            index === ""
+                ? `Add channel: ${name}`
+                : `Update channel: ${name}`
+        );
+
+        renderChannels();
+
+        toast("تم حفظ القناة بنجاح","success");
+
+    }catch(error){
+
+        console.error(error);
+
+        toast(
+            error.data?.message || error.message,
+            "error"
+        );
+
+        await loadAll();
+    }
 }
-function escapeHtml(s){return String(s).replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[m]))}
-function escapeAttr(s){return escapeHtml(s).replace(/`/g,'&#096;')}
+
+
+/* =========================================================
+   DELETE
+========================================================= */
+
+async function deleteChannel(index){
+
+    const channel = channels[index];
+
+    if(!channel) return;
+
+    const name =
+        channel.name || "هذه القناة";
+
+    if(!confirm(`هل تريد حذف "${name}"؟`)){
+        return;
+    }
+
+
+    try{
+
+        toast("جاري حذف القناة...");
+
+        /*
+         * نحذف من نسخة الذاكرة.
+         * writeFile سوف يعيد قراءة SHA الحالي
+         * قبل تنفيذ PUT.
+         */
+
+        const next =
+            channels.filter((_,i)=>i !== index);
+
+        await writeFile(
+            CHANNELS_PATH,
+            JSON.stringify(next,null,2),
+            `Delete channel: ${name}`
+        );
+
+        channels = next;
+
+        renderChannels();
+
+        toast("تم حذف القناة","success");
+
+    }catch(error){
+
+        console.error(error);
+
+        toast(
+            error.data?.message || error.message,
+            "error"
+        );
+
+        await loadAll();
+    }
+}
+
+
+/* =========================================================
+   SETTINGS
+========================================================= */
+
+function renderSettings(){
+
+    $("settingAppName").value =
+        settings.appName ||
+        settings.name ||
+        "Zone66 TV";
+
+    $("settingHeroTitle").value =
+        settings.heroTitle ||
+        settings.title ||
+        "مشاهدة سينمائية متكاملة";
+
+    $("settingHeroSubtitle").value =
+        settings.heroSubtitle ||
+        settings.subtitle ||
+        "قنوات مباشرة مع إدارة ومفضلة ومشغل مدمج";
+
+    $("settingButtonTitle").value =
+        settings.buttonTitle ||
+        "تشغيل البث الآن";
+
+    $("settingTelegram").value =
+        settings.telegramURL ||
+        settings.telegram ||
+        "";
+
+    $("settingAccent").value =
+        settings.accentHex ||
+        "#ff3046";
+}
+
+
+async function saveSettings(){
+
+    const newSettings = {
+
+        ...settings,
+
+        appName:
+            $("settingAppName").value.trim() ||
+            "Zone66 TV",
+
+        heroTitle:
+            $("settingHeroTitle").value.trim(),
+
+        heroSubtitle:
+            $("settingHeroSubtitle").value.trim(),
+
+        buttonTitle:
+            $("settingButtonTitle").value.trim(),
+
+        telegramURL:
+            $("settingTelegram").value.trim(),
+
+        accentHex:
+            $("settingAccent").value.trim() ||
+            "#ff3046"
+
+    };
+
+
+    try{
+
+        toast("جاري حفظ الإعدادات...");
+
+        await writeFile(
+            SETTINGS_PATH,
+            JSON.stringify(newSettings,null,2),
+            "Update Zone66 settings"
+        );
+
+        settings = newSettings;
+
+        toast(
+            "تم حفظ الإعدادات بنجاح",
+            "success"
+        );
+
+    }catch(error){
+
+        console.error(error);
+
+        toast(
+            error.data?.message || error.message,
+            "error"
+        );
+    }
+}
+
+
+/* =========================================================
+   CREATE MISSING FILES
+========================================================= */
+
+async function ensureFiles(){
+
+    try{
+
+        toast("جاري فحص الملفات...");
+
+        const channelsFile =
+            await getFile(CHANNELS_PATH);
+
+        if(!channelsFile.exists){
+
+            await writeFile(
+                CHANNELS_PATH,
+                JSON.stringify([],null,2),
+                "Initialize channels data"
+            );
+        }
+
+
+        const settingsFile =
+            await getFile(SETTINGS_PATH);
+
+        if(!settingsFile.exists){
+
+            const defaultSettings = {
+
+                appName:"Zone66 TV",
+
+                heroTitle:
+                    "مشاهدة سينمائية متكاملة",
+
+                heroSubtitle:
+                    "قنوات مباشرة مع إدارة ومفضلة ومشغل مدمج",
+
+                buttonTitle:
+                    "تشغيل البث الآن",
+
+                telegramURL:"",
+
+                accentHex:"#ff3046"
+
+            };
+
+            await writeFile(
+                SETTINGS_PATH,
+                JSON.stringify(defaultSettings,null,2),
+                "Initialize Zone66 settings"
+            );
+        }
+
+
+        await loadAll();
+
+        toast(
+            "تم فحص وإنشاء الملفات الناقصة",
+            "success"
+        );
+
+    }catch(error){
+
+        console.error(error);
+
+        toast(
+            error.data?.message || error.message,
+            "error"
+        );
+    }
+}
+
+
+/* =========================================================
+   TABS
+========================================================= */
+
+function showTab(id,button){
+
+    document.querySelectorAll(
+        "#dashboard > section[id$='Tab']"
+    ).forEach(el=>{
+        el.classList.add("hidden");
+    });
+
+    $(id).classList.remove("hidden");
+
+
+    document.querySelectorAll(".nav button")
+        .forEach(btn=>{
+            btn.classList.remove("active");
+        });
+
+    button.classList.add("active");
+}
+
+
+/* =========================================================
+   LOGOUT
+========================================================= */
+
+function logout(){
+
+    config = {
+        owner:"",
+        repo:"",
+        branch:"",
+        token:""
+    };
+
+    channels = [];
+    settings = {};
+
+    $("token").value = "";
+
+    $("dashboard").classList.remove("active");
+    $("loginScreen").style.display = "";
+
+    $("statusDot").classList.remove("online");
+    $("statusText").textContent = "غير متصل";
+}
+
+
+/* =========================================================
+   ID
+========================================================= */
+
+function createID(){
+
+    return "channel-" +
+        Date.now().toString(36) +
+        "-" +
+        Math.random()
+            .toString(36)
+            .substring(2,8);
+}
+
+
+/* =========================================================
+   SECURITY / HTML ESCAPE
+========================================================= */
+
+function escapeHTML(value){
+
+    return String(value ?? "")
+        .replaceAll("&","&amp;")
+        .replaceAll("<","&lt;")
+        .replaceAll(">","&gt;")
+        .replaceAll('"',"&quot;")
+        .replaceAll("'","&#039;");
+}
+
+
+function escapeAttribute(value){
+
+    return escapeHTML(value)
+        .replaceAll("`","&#096;");
+}
+
+
+/* =========================================================
+   CLOSE MODAL ON BACKDROP
+========================================================= */
+
+$("channelModal").addEventListener("click",function(e){
+
+    if(e.target === this){
+        closeModal();
+    }
+
+});
+
+
+/* =========================================================
+   ENTER LOGIN
+========================================================= */
+
+document.addEventListener("keydown",function(e){
+
+    if(
+        e.key === "Enter" &&
+        $("loginScreen").style.display !== "none"
+    ){
+        connect();
+    }
+
+});
+
 </script>
+
 </body>
 </html>

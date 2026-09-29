@@ -583,6 +583,88 @@ select option{
         padding:8px;
     }
 }
+
+/* MATCHES STYLES */
+.matches-grid{
+    display:grid;
+    grid-template-columns:repeat(auto-fill, minmax(320px, 1fr));
+    gap:14px;
+    margin-top:14px;
+}
+.match-card{
+    background:var(--card2);
+    border:1px solid var(--border);
+    border-radius:16px;
+    padding:16px;
+    display:flex;
+    flex-direction:column;
+    gap:12px;
+    transition:transform .2s, border-color .2s;
+}
+.match-card:hover{
+    border-color:rgba(255,48,70,0.5);
+    transform:translateY(-2px);
+}
+.match-badge{
+    display:inline-flex;
+    align-items:center;
+    gap:5px;
+    padding:4px 10px;
+    border-radius:20px;
+    font-size:11px;
+    font-weight:700;
+}
+.badge-live{ background:rgba(239,68,68,0.2); color:#ef4444; border:1px solid rgba(239,68,68,0.4); }
+.badge-upcoming{ background:rgba(245,158,11,0.2); color:#f59e0b; border:1px solid rgba(245,158,11,0.4); }
+.badge-finished{ background:rgba(146,151,165,0.2); color:#9297a5; border:1px solid rgba(146,151,165,0.4); }
+
+.match-teams-row{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    gap:8px;
+    padding:8px 0;
+}
+.match-team{
+    flex:1;
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    text-align:center;
+    gap:6px;
+}
+.match-team img{
+    width:50px;
+    height:50px;
+    object-fit:contain;
+    filter:drop-shadow(0 4px 8px rgba(0,0,0,0.3));
+}
+.match-team span{
+    font-size:13px;
+    font-weight:700;
+    line-height:1.2;
+}
+.match-center{
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    gap:4px;
+    min-width:70px;
+}
+.match-score{
+    font-size:18px;
+    font-weight:900;
+    font-family:monospace;
+    background:rgba(0,0,0,0.4);
+    padding:4px 12px;
+    border-radius:8px;
+    border:1px solid rgba(255,255,255,0.1);
+}
+.filter-btn.active{
+    background:var(--accent)!important;
+    color:#fff!important;
+}
+
 </style>
 </head>
 
@@ -657,6 +739,9 @@ select option{
                 📺 القنوات
             </button>
 
+            <button data-tab="matchesTab" onclick="showTab('matchesTab',this)">
+                ⚽ المباريات والنتائج
+            </button>
             <button data-tab="settingsTab" onclick="showTab('settingsTab',this)">
                 ⚙️ الإعدادات
             </button>
@@ -720,6 +805,37 @@ select option{
 
 
         <!-- SETTINGS -->
+
+        
+        <!-- MATCHES TAB -->
+        <section id="matchesTab" class="hidden">
+            <div class="card">
+                <div class="flex-between wrap gap10" style="margin-bottom:16px;">
+                    <div>
+                        <h2 style="margin:0 0 4px;font-size:20px;font-weight:800;">⚽ جدول المباريات والنتائج</h2>
+                        <div class="muted" style="font-size:13px;" id="matchesCountInfo">جاري التحميل...</div>
+                    </div>
+                    <button class="btn btn-primary" onclick="openAddMatch()">
+                        ➕ إضافة مباراة جديدة
+                    </button>
+                </div>
+
+                <!-- Filters -->
+                <div class="flex-between wrap gap10" style="margin-bottom:16px;">
+                    <div class="tabs" style="display:flex;gap:6px;flex-wrap:wrap;">
+                        <button class="btn btn-sm filter-btn active" id="filterMatchAll" onclick="setMatchFilter('all')">الكل</button>
+                        <button class="btn btn-sm filter-btn" id="filterMatchLive" onclick="setMatchFilter('live')" style="color:#ef4444;">🔴 مباشر</button>
+                        <button class="btn btn-sm filter-btn" id="filterMatchUpcoming" onclick="setMatchFilter('upcoming')">⏱️ قادمة</button>
+                        <button class="btn btn-sm filter-btn" id="filterMatchFinished" onclick="setMatchFilter('finished')">🏁 منتهية</button>
+                    </div>
+                    <div style="flex:1;min-width:200px;max-width:320px;">
+                        <input id="matchSearch" placeholder="🔍 بحث في المباريات..." oninput="renderMatches()" style="width:100%;margin:0;">
+                    </div>
+                </div>
+
+                <div id="matchesList" class="matches-grid"></div>
+            </div>
+        </section>
 
         <section id="settingsTab" class="hidden">
 
@@ -1215,10 +1331,11 @@ async function loadAll(){
             </div>
         `;
 
-        const [channelsFile,settingsFile] =
+        const [channelsFile,settingsFile,matchesFile] =
             await Promise.all([
                 getFile(CHANNELS_PATH),
-                getFile(SETTINGS_PATH)
+                getFile(SETTINGS_PATH),
+                getFile(MATCHES_PATH)
             ]);
 
 
@@ -1272,6 +1389,20 @@ async function loadAll(){
 
 
         renderChannels();
+
+        /* MATCHES */
+        if(matchesFile && matchesFile.exists){
+            try{
+                const parsedMatches = JSON.parse(matchesFile.content);
+                matches = Array.isArray(parsedMatches) ? parsedMatches : (parsedMatches.matches || []);
+            }catch{
+                matches = [];
+            }
+        }else{
+            matches = [];
+        }
+        renderMatches();
+
         renderSettings();
 
         toast("تم تحديث البيانات","success");
@@ -1567,6 +1698,20 @@ async function saveChannel(){
 
         renderChannels();
 
+        /* MATCHES */
+        if(matchesFile && matchesFile.exists){
+            try{
+                const parsedMatches = JSON.parse(matchesFile.content);
+                matches = Array.isArray(parsedMatches) ? parsedMatches : (parsedMatches.matches || []);
+            }catch{
+                matches = [];
+            }
+        }else{
+            matches = [];
+        }
+        renderMatches();
+
+
         toast("تم حفظ القناة بنجاح","success");
 
     }catch(error){
@@ -1623,6 +1768,20 @@ async function deleteChannel(index){
         channels = next;
 
         renderChannels();
+
+        /* MATCHES */
+        if(matchesFile && matchesFile.exists){
+            try{
+                const parsedMatches = JSON.parse(matchesFile.content);
+                matches = Array.isArray(parsedMatches) ? parsedMatches : (parsedMatches.matches || []);
+            }catch{
+                matches = [];
+            }
+        }else{
+            matches = [];
+        }
+        renderMatches();
+
 
         toast("تم حذف القناة","success");
 
@@ -1922,6 +2081,397 @@ document.addEventListener("keydown",function(e){
     }
 
 });
+
+
+/* =========================================================
+   MATCHES MANAGEMENT & PRESET TEAMS
+========================================================= */
+
+let matches = [];
+let currentMatchFilter = "all";
+const MATCHES_PATH = "Data/matches.json";
+
+const PRESET_TEAMS = [
+    {
+        category: "الأندية الأوروبية الكبرى",
+        teams: [
+            { name: "ريال مدريد", logo: "https://media.api-sports.io/football/teams/541.png" },
+            { name: "برشلونة", logo: "https://media.api-sports.io/football/teams/529.png" },
+            { name: "أتلتيكو مدريد", logo: "https://media.api-sports.io/football/teams/530.png" },
+            { name: "مانشستر سيتي", logo: "https://media.api-sports.io/football/teams/50.png" },
+            { name: "ليفربول", logo: "https://media.api-sports.io/football/teams/40.png" },
+            { name: "آرسنال", logo: "https://media.api-sports.io/football/teams/42.png" },
+            { name: "مانشستر يونايتد", logo: "https://media.api-sports.io/football/teams/33.png" },
+            { name: "تشيلسي", logo: "https://media.api-sports.io/football/teams/49.png" },
+            { name: "توتنهام", logo: "https://media.api-sports.io/football/teams/47.png" },
+            { name: "بايرن ميونخ", logo: "https://media.api-sports.io/football/teams/157.png" },
+            { name: "بوروسيا دورتموند", logo: "https://media.api-sports.io/football/teams/165.png" },
+            { name: "باريس سان جيرمان", logo: "https://media.api-sports.io/football/teams/85.png" },
+            { name: "إنتر ميلان", logo: "https://media.api-sports.io/football/teams/505.png" },
+            { name: "ميلان", logo: "https://media.api-sports.io/football/teams/489.png" },
+            { name: "يوفنتوس", logo: "https://media.api-sports.io/football/teams/496.png" },
+            { name: "نابولي", logo: "https://media.api-sports.io/football/teams/492.png" }
+        ]
+    },
+    {
+        category: "الأندية العربية والخليجية",
+        teams: [
+            { name: "الهلال السعودي", logo: "https://media.api-sports.io/football/teams/2939.png" },
+            { name: "النصر السعودي", logo: "https://media.api-sports.io/football/teams/2940.png" },
+            { name: "الاتحاد السعودي", logo: "https://media.api-sports.io/football/teams/2932.png" },
+            { name: "الأهلي السعودي", logo: "https://media.api-sports.io/football/teams/2933.png" },
+            { name: "الأهلي المصري", logo: "https://media.api-sports.io/football/teams/1029.png" },
+            { name: "الزمالك المصري", logo: "https://media.api-sports.io/football/teams/1033.png" },
+            { name: "العين الإماراتي", logo: "https://media.api-sports.io/football/teams/3824.png" },
+            { name: "السد القطري", logo: "https://media.api-sports.io/football/teams/4492.png" },
+            { name: "الشرطة العراقي", logo: "https://media.api-sports.io/football/teams/4578.png" },
+            { name: "القوة الجوية العراقي", logo: "https://media.api-sports.io/football/teams/4579.png" },
+            { name: "الزوراء العراقي", logo: "https://media.api-sports.io/football/teams/4580.png" }
+        ]
+    },
+    {
+        category: "المنتخبات العربية والخليجية",
+        teams: [
+            { name: "منتخب العراق", logo: "https://media.api-sports.io/football/teams/1569.png" },
+            { name: "منتخب السعودية", logo: "https://media.api-sports.io/football/teams/23.png" },
+            { name: "منتخب مصر", logo: "https://media.api-sports.io/football/teams/32.png" },
+            { name: "منتخب المغرب", logo: "https://media.api-sports.io/football/teams/31.png" },
+            { name: "منتخب الجزائر", logo: "https://media.api-sports.io/football/teams/28.png" },
+            { name: "منتخب تونس", logo: "https://media.api-sports.io/football/teams/29.png" },
+            { name: "منتخب قطر", logo: "https://media.api-sports.io/football/teams/1567.png" },
+            { name: "منتخب الإمارات", logo: "https://media.api-sports.io/football/teams/1568.png" },
+            { name: "منتخب الكويت", logo: "https://media.api-sports.io/football/teams/1570.png" },
+            { name: "منتخب الأردن", logo: "https://media.api-sports.io/football/teams/1571.png" },
+            { name: "منتخب البحرين", logo: "https://media.api-sports.io/football/teams/1566.png" },
+            { name: "منتخب عمان", logo: "https://media.api-sports.io/football/teams/1572.png" },
+            { name: "منتخب سوريا", logo: "https://media.api-sports.io/football/teams/1573.png" },
+            { name: "منتخب فلسطين", logo: "https://media.api-sports.io/football/teams/1574.png" },
+            { name: "منتخب لبنان", logo: "https://media.api-sports.io/football/teams/1575.png" }
+        ]
+    },
+    {
+        category: "المنتخبات العالمية",
+        teams: [
+            { name: "منتخب فرنسا", logo: "https://media.api-sports.io/football/teams/2.png" },
+            { name: "منتخب إسبانيا", logo: "https://media.api-sports.io/football/teams/9.png" },
+            { name: "منتخب إنجلترا", logo: "https://media.api-sports.io/football/teams/10.png" },
+            { name: "منتخب ألمانيا", logo: "https://media.api-sports.io/football/teams/25.png" },
+            { name: "منتخب البرازيل", logo: "https://media.api-sports.io/football/teams/6.png" },
+            { name: "منتخب الأرجنتين", logo: "https://media.api-sports.io/football/teams/26.png" },
+            { name: "منتخب البرتغال", logo: "https://media.api-sports.io/football/teams/27.png" },
+            { name: "منتخب إيطاليا", logo: "https://media.api-sports.io/football/teams/768.png" }
+        ]
+    }
+];
+
+function initPresetTeamsSelects(){
+    let optionsHtml = '<option value="">-- اختر من قائمة الأندية والمنتخبات الجاهزة --</option>';
+    PRESET_TEAMS.forEach((group, gIdx) => {
+        optionsHtml += `<optgroup label="${group.category}">`;
+        group.teams.forEach((t, tIdx) => {
+            optionsHtml += `<option value="${gIdx}_${tIdx}">${t.name}</option>`;
+        });
+        optionsHtml += `</optgroup>`;
+    });
+
+    const s1 = document.getElementById("presetTeam1");
+    const s2 = document.getElementById("presetTeam2");
+    if(s1) s1.innerHTML = optionsHtml;
+    if(s2) s2.innerHTML = optionsHtml;
+}
+
+function applyPresetTeam(teamNum, val){
+    if(!val) return;
+    const [gIdx, tIdx] = val.split("_").map(Number);
+    const item = PRESET_TEAMS[gIdx]?.teams[tIdx];
+    if(!item) return;
+
+    if(teamNum === 1){
+        document.getElementById("matchTeam1").value = item.name;
+        document.getElementById("matchTeam1Logo").value = item.logo;
+        updateLogoPreview(1);
+    }else{
+        document.getElementById("matchTeam2").value = item.name;
+        document.getElementById("matchTeam2Logo").value = item.logo;
+        updateLogoPreview(2);
+    }
+}
+
+function updateLogoPreview(teamNum){
+    const logoInput = document.getElementById(teamNum === 1 ? "matchTeam1Logo" : "matchTeam2Logo");
+    const previewImg = document.getElementById(teamNum === 1 ? "team1Preview" : "team2Preview");
+    if(!logoInput || !previewImg) return;
+
+    const val = logoInput.value.trim();
+    if(val && (val.startsWith("http://") || val.startsWith("https://"))){
+        previewImg.src = val;
+        previewImg.style.display = "block";
+    }else{
+        previewImg.style.display = "none";
+    }
+}
+
+function setMatchFilter(filter){
+    currentMatchFilter = filter;
+    document.querySelectorAll(".filter-btn").forEach(b => b.classList.remove("active"));
+    const activeBtn = document.getElementById("filterMatch" + filter.charAt(0).toUpperCase() + filter.slice(1));
+    if(activeBtn) activeBtn.classList.add("active");
+    renderMatches();
+}
+
+function renderMatches(){
+    const list = document.getElementById("matchesList");
+    if(!list) return;
+
+    const query = (document.getElementById("matchSearch")?.value || "").toLowerCase().trim();
+
+    let filtered = matches.filter(m => {
+        if(currentMatchFilter === "live" && m.status !== "live") return false;
+        if(currentMatchFilter === "upcoming" && m.status !== "upcoming") return false;
+        if(currentMatchFilter === "finished" && m.status !== "finished") return false;
+
+        if(query){
+            const t1 = (m.team1 || "").toLowerCase();
+            const t2 = (m.team2 || "").toLowerCase();
+            const det = (m.details || "").toLowerCase();
+            const ch = (m.channelName || "").toLowerCase();
+            if(!t1.includes(query) && !t2.includes(query) && !det.includes(query) && !ch.includes(query)) return false;
+        }
+        return true;
+    });
+
+    const liveCount = matches.filter(m => m.status === "live").length;
+    const upCount = matches.filter(m => m.status === "upcoming").length;
+    const finCount = matches.filter(m => m.status === "finished").length;
+
+    const infoEl = document.getElementById("matchesCountInfo");
+    if(infoEl){
+        infoEl.innerHTML = `إجمالي: <b>${matches.length}</b> (🔴 مباشر: ${liveCount} | ⏱️ قادمة: ${upCount} | 🏁 منتهية: ${finCount})`;
+    }
+
+    if(filtered.length === 0){
+        list.innerHTML = `
+            <div style="grid-column:1/-1;text-align:center;padding:40px;color:var(--muted);background:var(--card2);border-radius:14px;border:1px dashed var(--border);">
+                <div style="font-size:36px;margin-bottom:8px;">⚽</div>
+                <div style="font-size:15px;font-weight:700;">لا توجد مباريات مطابقة للبحث أو الفلتر</div>
+                <div style="font-size:12px;margin-top:4px;">اضغط "إضافة مباراة جديدة" لجدولة مباراة جديدة مع الشعار</div>
+            </div>
+        `;
+        return;
+    }
+
+    list.innerHTML = filtered.map(m => {
+        let badgeClass = "badge-upcoming";
+        let badgeText = "⏱️ قادمة";
+        if(m.status === "live"){
+            badgeClass = "badge-live";
+            badgeText = "🔴 مباشر الآن";
+        }else if(m.status === "finished"){
+            badgeClass = "badge-finished";
+            badgeText = "🏁 منتهية";
+        }
+
+        const t1Logo = m.team1Logo ? `<img src="${escapeAttribute(m.team1Logo)}" onerror="this.style.display='none'" alt="">` : `<div style="font-size:24px;">⚽</div>`;
+        const t2Logo = m.team2Logo ? `<img src="${escapeAttribute(m.team2Logo)}" onerror="this.style.display='none'" alt="">` : `<div style="font-size:24px;">⚽</div>`;
+
+        return `
+            <div class="match-card">
+                <div class="flex-between">
+                    <span class="match-badge ${badgeClass}">${badgeText}</span>
+                    <span class="muted" style="font-size:12px;">${escapeHTML(m.details || "مباراة اليوم")}</span>
+                </div>
+
+                <div class="match-teams-row">
+                    <div class="match-team">
+                        ${t1Logo}
+                        <span>${escapeHTML(m.team1 || "فريق 1")}</span>
+                    </div>
+                    <div class="match-center">
+                        <div class="match-score">${escapeHTML(m.score || "vs")}</div>
+                        <div class="muted" style="font-size:11px;">${escapeHTML(m.time || "")}</div>
+                        ${m.date ? `<div class="muted" style="font-size:10px;">${escapeHTML(m.date)}</div>` : ""}
+                    </div>
+                    <div class="match-team">
+                        ${t2Logo}
+                        <span>${escapeHTML(m.team2 || "فريق 2")}</span>
+                    </div>
+                </div>
+
+                ${m.channelName ? `
+                    <div style="background:rgba(255,255,255,0.04);padding:6px 10px;border-radius:8px;font-size:11px;display:flex;align-items:center;gap:6px;">
+                        <span>📺 الناقل:</span>
+                        <b style="color:var(--accent2);">${escapeHTML(m.channelName)}</b>
+                    </div>
+                ` : ""}
+
+                <div style="display:flex;gap:6px;margin-top:auto;padding-top:8px;border-top:1px solid rgba(255,255,255,0.06);">
+                    <button class="btn btn-sm" style="flex:1;" onclick="editMatch('${escapeAttribute(m.id)}')">✏️ تعديل</button>
+                    ${m.status !== "live" ? `
+                        <button class="btn btn-sm btn-danger" onclick="quickSetMatchStatus('${escapeAttribute(m.id)}','live')" title="تحويل لمباشر">🔴</button>
+                    ` : `
+                        <button class="btn btn-sm" onclick="quickSetMatchStatus('${escapeAttribute(m.id)}','finished')" title="إنهاء المباراة">🏁</button>
+                    `}
+                    <button class="btn btn-sm" style="color:var(--danger);" onclick="deleteMatch('${escapeAttribute(m.id)}')" title="حذف">🗑️</button>
+                </div>
+            </div>
+        `;
+    }).join("");
+}
+
+function populateMatchChannelsSelect(selectedId){
+    const select = document.getElementById("matchChannelSelect");
+    if(!select) return;
+
+    let html = '<option value="">-- بدون ربط قناة (أو اختر من قنواتك) --</option>';
+    channels.forEach(ch => {
+        const isSel = ch.id === selectedId ? "selected" : "";
+        html += `<option value="${escapeAttribute(ch.id)}" ${isSel}>${escapeHTML(ch.name)} (${escapeHTML(ch.category || "عام")})</option>`;
+    });
+    select.innerHTML = html;
+}
+
+function onMatchChannelChange(chId){
+    const found = channels.find(c => c.id === chId);
+    if(found && found.streamURL){
+        document.getElementById("matchStreamURL").value = found.streamURL;
+    }
+}
+
+function openAddMatch(){
+    document.getElementById("matchModalTitle").innerText = "➕ إضافة مباراة جديدة";
+    document.getElementById("matchId").value = "";
+    document.getElementById("matchTeam1").value = "";
+    document.getElementById("matchTeam1Logo").value = "";
+    document.getElementById("matchTeam2").value = "";
+    document.getElementById("matchTeam2Logo").value = "";
+    document.getElementById("matchScore").value = "vs";
+    document.getElementById("matchStatus").value = "upcoming";
+    document.getElementById("matchDetails").value = "دوري أبطال أوروبا";
+    document.getElementById("matchStreamURL").value = "";
+
+    const now = new Date();
+    document.getElementById("matchDate").value = now.toISOString().slice(0, 10);
+    document.getElementById("matchTime").value = "21:00";
+
+    initPresetTeamsSelects();
+    populateMatchChannelsSelect("");
+    updateLogoPreview(1);
+    updateLogoPreview(2);
+
+    document.getElementById("matchModal").classList.add("show");
+}
+
+function editMatch(id){
+    const m = matches.find(x => x.id === id);
+    if(!m) return;
+
+    document.getElementById("matchModalTitle").innerText = "✏️ تعديل المباراة";
+    document.getElementById("matchId").value = m.id;
+    document.getElementById("matchTeam1").value = m.team1 || "";
+    document.getElementById("matchTeam1Logo").value = m.team1Logo || "";
+    document.getElementById("matchTeam2").value = m.team2 || "";
+    document.getElementById("matchTeam2Logo").value = m.team2Logo || "";
+    document.getElementById("matchScore").value = m.score || "vs";
+    document.getElementById("matchStatus").value = m.status || "upcoming";
+    document.getElementById("matchDetails").value = m.details || "";
+    document.getElementById("matchDate").value = m.date || "";
+    document.getElementById("matchTime").value = m.time || "";
+    document.getElementById("matchStreamURL").value = m.streamURL || "";
+
+    initPresetTeamsSelects();
+    populateMatchChannelsSelect(m.channelId || "");
+    updateLogoPreview(1);
+    updateLogoPreview(2);
+
+    document.getElementById("matchModal").classList.add("show");
+}
+
+function closeMatchModal(){
+    document.getElementById("matchModal").classList.remove("show");
+}
+
+async function saveMatch(){
+    const t1 = document.getElementById("matchTeam1").value.trim();
+    const t2 = document.getElementById("matchTeam2").value.trim();
+
+    if(!t1 || !t2){
+        toast("يرجى إدخال اسم الفريق الأول والثاني","error");
+        return;
+    }
+
+    const id = document.getElementById("matchId").value || ("match_" + Date.now().toString(36) + "_" + Math.random().toString(36).slice(2, 6));
+    const chId = document.getElementById("matchChannelSelect").value;
+    const selectedCh = channels.find(c => c.id === chId);
+
+    const matchObj = {
+        id: id,
+        team1: t1,
+        team2: t2,
+        team1Logo: document.getElementById("matchTeam1Logo").value.trim(),
+        team2Logo: document.getElementById("matchTeam2Logo").value.trim(),
+        time: document.getElementById("matchTime").value.trim() || "20:00",
+        date: document.getElementById("matchDate").value.trim() || new Date().toISOString().slice(0, 10),
+        details: document.getElementById("matchDetails").value.trim() || "بث مباشر",
+        status: document.getElementById("matchStatus").value,
+        score: document.getElementById("matchScore").value.trim() || "vs",
+        channelId: chId,
+        channelName: selectedCh ? selectedCh.name : "",
+        streamURL: document.getElementById("matchStreamURL").value.trim() || (selectedCh ? selectedCh.streamURL : "")
+    };
+
+    const idx = matches.findIndex(x => x.id === id);
+    if(idx >= 0){
+        matches[idx] = matchObj;
+    }else{
+        matches.unshift(matchObj);
+    }
+
+    closeMatchModal();
+    renderMatches();
+
+    try{
+        toast("جاري حفظ وتحديث المباريات على GitHub...","");
+        await writeFile(MATCHES_PATH, JSON.stringify(matches, null, 2), `تحديث بيانات المباراة (${t1} ضد ${t2})`);
+        toast("تم حفظ وتحديث المباريات بنجاح!","success");
+    }catch(err){
+        console.error(err);
+        toast("فشل حفظ المباراة: " + (err.message || err),"error");
+    }
+}
+
+async function deleteMatch(id){
+    const m = matches.find(x => x.id === id);
+    if(!m) return;
+    if(!confirm(`هل أنت متأكد من حذف مباراة (${m.team1} ضد ${m.team2})؟`)) return;
+
+    matches = matches.filter(x => x.id !== id);
+    renderMatches();
+
+    try{
+        toast("جاري حذف المباراة...","");
+        await writeFile(MATCHES_PATH, JSON.stringify(matches, null, 2), `حذف مباراة (${m.team1} ضد ${m.team2})`);
+        toast("تم حذف المباراة بنجاح","success");
+    }catch(err){
+        console.error(err);
+        toast("فشل الحذف: " + (err.message || err),"error");
+    }
+}
+
+async function quickSetMatchStatus(id, newStatus){
+    const m = matches.find(x => x.id === id);
+    if(!m) return;
+    m.status = newStatus;
+    renderMatches();
+
+    try{
+        toast("جاري تحديث حالة المباراة...","");
+        await writeFile(MATCHES_PATH, JSON.stringify(matches, null, 2), `تحديث حالة مباراة (${m.team1} ضد ${m.team2}) إلى ${newStatus}`);
+        toast("تم تحديث الحالة بنجاح","success");
+    }catch(err){
+        console.error(err);
+        toast("فشل التحديث: " + (err.message || err),"error");
+    }
+}
 
 </script>
 

@@ -937,6 +937,122 @@ select option{
 </div>
 
 
+
+<!-- MATCH MODAL -->
+<div id="matchModal" class="modal">
+    <div class="modal-box" style="width:min(720px,100%);">
+        <div class="modal-header">
+            <h2 id="matchModalTitle">➕ إضافة مباراة جديدة</h2>
+            <button class="close" onclick="closeMatchModal()">×</button>
+        </div>
+
+        <input type="hidden" id="matchId">
+
+        <!-- Team 1 -->
+        <div style="background:rgba(255,255,255,0.02);border:1px solid var(--border);border-radius:16px;padding:14px;margin-bottom:14px;">
+            <div style="font-weight:700;margin-bottom:8px;color:var(--accent);display:flex;align-items:center;gap:8px;">
+                <span>🏟️ الفريق الأول (المستضيف)</span>
+            </div>
+            <div class="field" style="margin-bottom:10px;">
+                <label>اختيار سريع من الأندية والمنتخبات الجاهزة:</label>
+                <select id="presetTeam1" onchange="applyPresetTeam(1, this.value)"></select>
+            </div>
+            <div class="grid">
+                <div class="field">
+                    <label>اسم الفريق الأول</label>
+                    <input id="matchTeam1" placeholder="مثلاً: ريال مدريد">
+                </div>
+                <div class="field">
+                    <label>رابط شعار الفريق الأول</label>
+                    <div style="display:flex;gap:8px;align-items:center;">
+                        <input id="matchTeam1Logo" placeholder="https://..." oninput="updateLogoPreview(1)" style="flex:1;">
+                        <img id="team1Preview" src="" alt="" style="width:38px;height:38px;object-fit:contain;display:none;border-radius:8px;background:rgba(255,255,255,0.06);padding:4px;border:1px solid var(--border);">
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Team 2 -->
+        <div style="background:rgba(255,255,255,0.02);border:1px solid var(--border);border-radius:16px;padding:14px;margin-bottom:14px;">
+            <div style="font-weight:700;margin-bottom:8px;color:var(--accent);display:flex;align-items:center;gap:8px;">
+                <span>✈️ الفريق الثاني (الضيف)</span>
+            </div>
+            <div class="field" style="margin-bottom:10px;">
+                <label>اختيار سريع من الأندية والمنتخبات الجاهزة:</label>
+                <select id="presetTeam2" onchange="applyPresetTeam(2, this.value)"></select>
+            </div>
+            <div class="grid">
+                <div class="field">
+                    <label>اسم الفريق الثاني</label>
+                    <input id="matchTeam2" placeholder="مثلاً: برشلونة">
+                </div>
+                <div class="field">
+                    <label>رابط شعار الفريق الثاني</label>
+                    <div style="display:flex;gap:8px;align-items:center;">
+                        <input id="matchTeam2Logo" placeholder="https://..." oninput="updateLogoPreview(2)" style="flex:1;">
+                        <img id="team2Preview" src="" alt="" style="width:38px;height:38px;object-fit:contain;display:none;border-radius:8px;background:rgba(255,255,255,0.06);padding:4px;border:1px solid var(--border);">
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Score & Status -->
+        <div class="grid">
+            <div class="field">
+                <label>النتيجة / الحالة</label>
+                <input id="matchScore" placeholder="vs أو النتيجة مثل 2 - 1">
+            </div>
+            <div class="field">
+                <label>حالة المباراة</label>
+                <select id="matchStatus">
+                    <option value="upcoming">قادمة (لم تبدأ)</option>
+                    <option value="live">مباشر الآن 🔴</option>
+                    <option value="finished">انتهت</option>
+                </select>
+            </div>
+        </div>
+
+        <!-- Date & Time -->
+        <div class="grid">
+            <div class="field">
+                <label>تاريخ المباراة</label>
+                <input type="date" id="matchDate">
+            </div>
+            <div class="field">
+                <label>توقيت المباراة</label>
+                <input type="time" id="matchTime">
+            </div>
+        </div>
+
+        <!-- Tournament / Details -->
+        <div class="field">
+            <label>اسم البطولة / تفاصيل</label>
+            <input id="matchDetails" placeholder="مثلاً: دوري أبطال أوروبا - نصف النهائي">
+        </div>
+
+        <!-- Channel link & stream -->
+        <div style="background:rgba(255,255,255,0.02);border:1px solid var(--border);border-radius:16px;padding:14px;margin-bottom:14px;">
+            <div style="font-weight:700;margin-bottom:8px;color:var(--text);display:flex;align-items:center;gap:8px;">
+                <span>📺 ربط المباراة بقناة أو بث</span>
+            </div>
+            <div class="field" style="margin-bottom:10px;">
+                <label>اختيار القناة الناقلة من قائمة قنواتك:</label>
+                <select id="matchChannelSelect" onchange="onMatchChannelChange(this.value)"></select>
+            </div>
+            <div class="field">
+                <label>رابط البث المباشر (HLS / m3u8)</label>
+                <input id="matchStreamURL" placeholder="رابط البث (يُملأ تلقائياً عند اختيار القناة، أو الصقه يدوياً)">
+            </div>
+        </div>
+
+        <div class="grid">
+            <button class="btn" onclick="closeMatchModal()">إلغاء</button>
+            <button class="btn btn-primary" onclick="saveMatch()">حفظ المباراة</button>
+        </div>
+    </div>
+</div>
+
+
 <!-- CHANNEL MODAL -->
 
 <div id="channelModal" class="modal">

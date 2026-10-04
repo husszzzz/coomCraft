@@ -1104,6 +1104,12 @@ select option{
         </div>
 
 
+        <div class="field">
+            <label>User-Agent (اختياري)</label>
+            <input id="channelUserAgent" placeholder="مثلاً: Mozilla/5.0 ...">
+        </div>
+
+
         <label class="check">
             <input type="checkbox" id="channelEnabled" checked>
             <span>القناة مفعلة</span>
@@ -1665,6 +1671,7 @@ function openAddChannel(){
     $("channelDescription").value = "";
     $("channelIcon").value = "";
     $("channelStream").value = "";
+    $("channelUserAgent").value = "";
 
     $("channelEnabled").checked = true;
     $("channelFeatured").checked = false;
@@ -1705,6 +1712,11 @@ function editChannel(index){
         c.stream ||
         "";
 
+    $("channelUserAgent").value =
+        c.userAgent ||
+        c.user_agent ||
+        "";
+
     $("channelEnabled").checked =
         c.enabled !== false;
 
@@ -1740,6 +1752,9 @@ async function saveChannel(){
 
     const streamURL =
         $("channelStream").value.trim();
+
+    const userAgent =
+        $("channelUserAgent").value.trim();
 
     const enabled =
         $("channelEnabled").checked;
@@ -1779,6 +1794,8 @@ async function saveChannel(){
         icon:icon,
 
         streamURL:streamURL,
+
+        userAgent:userAgent || undefined,
 
         enabled:enabled,
 
